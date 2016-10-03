@@ -12,13 +12,38 @@
 
       <div class="textarea">
 	<div class="textbox">
-	  <input type="text" placeholder="Your name here"name="login-prompt">
-	</div>
-	<div class="textbutton">
-	  <button>Send</button>
-	</div>
+          <input type="text" id="loginprompt"placeholder="Your name here"id="login-prompt"onkeydown="if(event.keyCode == 13)
+												      login();" />
+        </div>
+        <div class="textbutton">
+	    <input type="button" id=loginbutton Value="Send" onclick="login();"/>
+        </div>
       </div>
     </div>
 
   </body>
 </html>
+
+<script>
+
+  function login()
+  {
+    var usrName= document.getElementById('login-prompt').value;
+    usrName = usrName.split(" ")[0];
+    document.getElementById("login-prompt").value = "";
+
+    var form = document.createElement('form');
+    var input = document.createElement('input');
+    input.setAttribute('type', 'hidden');
+    input.setAttribute('name', 'userName');
+    input.setAttribute('value', usrName);
+    
+    form.setAttribute('method', 'post');
+    form.setAttribute('action', 'webClient.html');
+    form.style.display = 'hidden';
+    form.append(input);
+    document.body.appendChild(form)
+    form.submit();
+  }
+
+</script>

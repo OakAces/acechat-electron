@@ -1,0 +1,122 @@
+<html>
+  <head>
+
+    <link rel="stylesheet" type="text/css" href="webUI.css">
+
+  </head>
+
+  <body class="body">
+    <div class="left-column">
+      <h3>
+	Channel List
+      </h3>
+      <div class="channel-list">
+
+      <!-- TODO : POPULATE WITH CHANNELS FROM SERVER -->
+
+      </div>
+
+      <button class="logout-button"name="logout"type="button">LOGOUT</button>
+    </div>
+
+    <!--top bar-->
+    <div class="top-bar">
+      <!-- TODO : Populate from server-->
+      Channel Name : Channel Details
+    </div>
+
+    <!--right -->
+    <div class="right">
+      <h3>
+	Online
+      </h3>
+      <!-- TODO : POPULATE WITH USERS FROM SERVER -->
+      <div class="online-list">
+      </div>
+    </div>
+
+    <!--center-->
+    <div class="center">
+      <div class="chat-log">
+	<!-- TODO : Populate from server-->
+      </div>
+
+
+      <!-- TODO : Send to server -->
+      <div class="textarea">
+	>&nbsp
+	<div class="textbox">
+	  <input type="text" placeholder="Say Something!"id="chat-prompt"onkeydown="if(event.keyCode == 13)
+											sendMessage();"/>
+	</div>
+	<div class="textbutton">
+	  <input type="button" id="textbutton" Value="Send" onclick="sendMessage();"/>
+	</div>
+      </div>
+
+    </div>
+
+  </body>
+
+
+</html>
+  
+  
+  
+<script>
+
+  var channel = "default";
+
+  //sends object to sever
+  function send(e)
+  {}
+  
+  //gets user list from server, returns as array of strings
+  function usrList()
+  {}
+
+  //gets channel list from server, returns as array of strings
+  function channelList()
+  {}
+
+  //joins the channel specified by a string
+  function join(e)
+  {}
+
+  //leaves the current channel
+  function part()
+  {}
+
+  
+  //sends message to currently selected channel. if message starts with /usrname 
+  //it is a private message instead
+  function sendMessage()
+  {
+    var msgTxt = document.getElementById("chat-prompt").value;
+    document.getElementById("chat-prompt").value = "";
+    var msgArr = msgTxt.split(" ");
+    var u = msgArr[0].substring(1);
+    
+    if (msgTxt.charAt(0) == '/' && !!~usrList().indexOf(u))
+    {
+      msgArr.shift();
+      msgTxt = msgArr.join(" ");
+      msg = {
+	      "command" : "PRIVMSG",
+	      "args" : [u,msgTxt]
+	    }
+    }
+    else
+    {
+      msg = {
+              "command" : "MSG",
+	      "args" : [channel, msgTxt]
+	  
+	    }
+    }
+    send(msg);
+  }
+
+</script>
+
+
