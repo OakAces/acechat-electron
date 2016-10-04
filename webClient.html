@@ -70,7 +70,7 @@
   
   
 <script type="text/javascript">
-
+  
   //current channel
   var channel = "default";
 
@@ -79,21 +79,22 @@
 
   //must be logged in to access this page
   if(!document.cookie)
+  {
     window.location="login.html";
-
-  //login with server
-  userName = document.cookie.split('=')[1];
-  usrMsg = {
-	    "command" : "USER",
-	    "args" : [userName]
-	   }
-  send(usrMsg);
-
+  }
 
   //sends object to sever
   function send(e)
   {}
-  
+
+  //login with server
+  var userName = document.cookie.split('=')[1];
+  var usrMsg = {
+	    "command" : "USER",
+	    "args" : [userName]
+	   };
+  send(usrMsg);
+
   //gets user list from server, returns as array of strings
   function usrList()
   {
@@ -107,20 +108,20 @@
   //joins the channels specified by an array of strings
   function join(e)
   {
-    msg = {
+    var msg = {
 	    "command" : "JOIN",
 	    "args" : e
-	  }
+	  };
     send(msg);
   }
 
   //leaves the channels specified by an array of strings 
   function part(e)
   {
-    msg = {
+    var msg = {
 	    "command" : "PART",
 	    "args" : e
-	  }
+	  };
     send(msg);
   }
 
@@ -128,20 +129,20 @@
   //args in the form channel, user0, user1,..,usern
   function invite(e)
   {
-    msg = {
+    var msg = {
 	    "command" : "INVITE",
 	    "args" : e
-	  }
+	  };
     send(msg);
   }
 
   //list channels on server
-  function chanlist
+  function chanlist()
   {
-    msg = {
+    var msg = {
 	    "command" : "CHANLIST",
 	    "args" : []
-	  }
+	  };
     send(msg);
   }
 
@@ -154,7 +155,10 @@
       date.setTime(date.getTime()+(days*24*60*60*1000));
       var expires = "; expires="+date.toUTCString();
     }
-    else var expires = "";
+    else 
+    {
+      var expires = "";
+    }
     document.cookie = name+"="+value+expires+"; path=/";
   }
   
@@ -162,10 +166,11 @@
   {
     var msgTxt = document.getElementById("chat-prompt").value;
     var msgArr = msgTxt.split(" ");
+    var msg;
     document.getElementById("chat-prompt").value = "";
     
     //if input begins with /validUsrName, send private message
-    if (msgTxt.match(/^\(msg\)( |$)/) && !!~usrList().indexOf(msgArr[1]))
+    if (msgTxt.match(/^\(msg\)(\s|$)/) && !!~usrList().indexOf(msgArr[1]))
     {
       msgArr.shift();
       msgArr.shift();
@@ -173,13 +178,13 @@
       msg = {
 	      "command" : "PRIVMSG",
 	      "args" : [msgArr[1],msgTxt]
-	    }
+	    };
       send(msg);
     }
 
     //logout, logoff
     //parts all channels, logs out
-    else if (msgTxt.match(/^\(logoff\)( |$)/) || msgTxt.match(/^\(logout\)( |$)/))
+    else if (msgTxt.match(/^\(logoff\)(\s|$)/) || msgTxt.match(/^\(logout\)(\s|$)/))
     {
       part(channels);
       createCookie("user","",-1);
@@ -193,7 +198,7 @@
               "command" : "MSG",
 	      "args" : [channel, msgTxt]
 	  
-	    }
+	    };
       send(msg);
     }
   }
