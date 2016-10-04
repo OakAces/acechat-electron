@@ -1,3 +1,9 @@
+<!-- NOTE:: This uses a cookie to pass the username from the login screen
+	    to the client screen. Chrome does not support cookies for local 
+	    files. It **should** work in Chrome when deployed, but it must
+	    be tested locally in a different browser
+-->
+
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="login.css">
@@ -12,11 +18,11 @@
 
       <div class="textarea">
 	<div class="textbox">
-          <input type="text" id="loginprompt"placeholder="Your name here"id="login-prompt"onkeydown="if(event.keyCode == 13)
+          <input type="text" placeholder="Your name here"id="login-prompt"onkeydown="if(event.keyCode == 13)
 												      login();" />
         </div>
         <div class="textbutton">
-	    <input type="button" id=loginbutton Value="Send" onclick="login();"/>
+	    <input type="button" id="loginbutton" Value="Send" onclick="login();"/>
         </div>
       </div>
     </div>
@@ -24,26 +30,38 @@
   </body>
 </html>
 
-<script>
+<script type="text/javascript">
+
+  function createCookie(name,value,days) 
+  {
+    if (days) {
+      var date = new Date();
+      date.setTime(date.getTime()+(days*24*60*60*1000));
+      var expires = "; expires="+date.toUTCString();
+    }
+    else var expires = "";
+    document.cookie = name+"="+value+expires+"; path=/";
+  }
+
 
   function login()
   {
     var usrName= document.getElementById('login-prompt').value;
     usrName = usrName.split(" ")[0];
+
     document.getElementById("login-prompt").value = "";
 
     var form = document.createElement('form');
-    var input = document.createElement('input');
-    input.setAttribute('type', 'hidden');
-    input.setAttribute('name', 'userName');
-    input.setAttribute('value', usrName);
+    createCookie("user", usrName,5);
+    //TODO  -- verify username is not already in use
+    
     
     form.setAttribute('method', 'post');
     form.setAttribute('action', 'webClient.html');
     form.style.display = 'hidden';
-    form.append(input);
     document.body.appendChild(form)
     form.submit();
+    
   }
 
 </script>
