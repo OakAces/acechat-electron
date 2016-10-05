@@ -14,7 +14,7 @@
   <body class="body">
     <div class="left-column">
       <h3>
-	Channel List
+				Channel List
       </h3>
       <div class="channel-list">
 
@@ -27,8 +27,7 @@
 
     <!--top bar-->
     <div class="top-bar">
-      <!-- TODO : Populate from server-->
-      Channel Name
+		<code id="channel-title">Default Channel</code>
     </div>
 
     <!--right -->
@@ -69,7 +68,7 @@
 <script type="text/javascript">
   
   //current channel
-  var channel = "default";
+  var channel = "Default Channel";
 
   //channels currently "joined"
   var channels = ["default"];
@@ -82,7 +81,10 @@
     window.location="login.html";
   }
 
-
+	function updateTopBar()
+	{
+		document.getElementById("channel-title").innerHTML = channel;
+	}
 
   //sends object to sever
   function send(e)
@@ -197,7 +199,7 @@
     document.getElementById("chat-prompt").value = "";
     
     //if input begins with /validUsrName, send private message
-    if (msgTxt.match(/^\(msg\)(\s|$)/) && !!~usrList().indexOf(msgArr[1]))
+    if (msgTxt.match(/^\/msg(\s|$)/) && !!~usrList().indexOf(msgArr[1]))
     {
       msgArr.shift();
       msgArr.shift();
@@ -211,14 +213,14 @@
 
     //logout, logoff
     //parts all channels, logs out
-    else if (msgTxt.match(/^\(logoff\)(\s|$)/) || msgTxt.match(/^\(logout\)(\s|$)/))
+    else if (msgTxt.match(/^\/logoff(\s|$)/) || msgTxt.match(/^\/logout(\s|$)/))
     {
 			logout();
     }
 
     //default, send message to current channel
-    else
-    {
+    else if (msgTxt != "" && msgTxt != null)
+		{
       msg = {
               "command" : "MSG",
 							"args" : [channel, msgTxt]
@@ -226,6 +228,7 @@
       send(msg);
     }
   }
+
 
 </script>
 

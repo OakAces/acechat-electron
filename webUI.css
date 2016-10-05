@@ -35,6 +35,10 @@
   float:right;
   height: 3%;
 }
+code
+{
+	font-size: x-large;
+}
 .logout-button
 {
   background-color:red;
