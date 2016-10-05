@@ -47,7 +47,6 @@
 	<!-- TODO : Populate from server-->
       </div>
 
-
       <!-- TODO : Send to server -->
       <div class="textarea">
 	>&nbsp
@@ -64,11 +63,9 @@
 
   </body>
 
-
 </html>
   
-  
-  
+<script src ="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 <script type="text/javascript">
   
   //current channel
@@ -77,41 +74,60 @@
   //channels currently "joined"
   var channels = ["default"];
 
+	var sock = new WebSocket("ws://127.0.0.1/server.py");
+
   //must be logged in to access this page
   if(!document.cookie)
   {
     window.location="login.html";
   }
 
+
+
   //sends object to sever
   function send(e)
-  {}
+  {
+		sock.send(JSON.stringify(e));
+	}
+
+	//recieve data from server
+	sock.onmessage = function(event)
+	{
+		var msg = JSON.parse(event.data);
+		//do something
+		switch(msg.command){ 
+		}
+	}
 
   //login with server
   var userName = document.cookie.split('=')[1];
   var usrMsg = {
-	    "command" : "USER",
-	    "args" : [userName]
-	   };
+									"command" : "USER",
+									"args" : [userName]
+							 };
   send(usrMsg);
 
   //gets user list from server, returns as array of strings
   function usrList()
   {
-    return [userName];
-  }
+		msg = {
+						"command" : "USERLIST",
+						"args" : []
+					};
+		send(msg);
 
-  //gets channel list from server, returns as array of strings
-  function channelList()
-  {}
+		//get list from server?
+		var list;
+    return list;
+  }
 
   //joins the channels specified by an array of strings
   function join(e)
   {
     var msg = {
-	    "command" : "JOIN",
-	    "args" : e
-	  };
+								"command" : "JOIN",
+								"args" : e
+							};
     send(msg);
   }
 
@@ -119,9 +135,9 @@
   function part(e)
   {
     var msg = {
-	    "command" : "PART",
-	    "args" : e
-	  };
+								"command" : "PART",
+								"args" : e
+							};
     send(msg);
   }
 
@@ -130,9 +146,9 @@
   function invite(e)
   {
     var msg = {
-	    "command" : "INVITE",
-	    "args" : e
-	  };
+								"command" : "INVITE",
+								"args" : e
+							};
     send(msg);
   }
 
@@ -140,16 +156,17 @@
   function chanlist()
   {
     var msg = {
-	    "command" : "CHANLIST",
-	    "args" : []
-	  };
+								"command" : "CHANLIST",
+								"args" : []
+							};
     send(msg);
+    send(msg); //get list from server?
+		var list;
+		return list;
   }
 
-  
-
   function createCookie(name,value,days) 
-  {
+  
     if (days) {
       var date = new Date();
       date.setTime(date.getTime()+(days*24*60*60*1000));
@@ -176,9 +193,9 @@
       msgArr.shift();
       msgTxt = msgArr.join(" ");
       msg = {
-	      "command" : "PRIVMSG",
-	      "args" : [msgArr[1],msgTxt]
-	    };
+							"command" : "PRIVMSG",
+							"args" : [msgArr[1],msgTxt]
+						};
       send(msg);
     }
 
@@ -188,6 +205,7 @@
     {
       part(channels);
       createCookie("user","",-1);
+			sock.close();
       window.location="login.html";
     }
 
@@ -196,9 +214,8 @@
     {
       msg = {
               "command" : "MSG",
-	      "args" : [channel, msgTxt]
-	  
-	    };
+							"args" : [channel, msgTxt]
+						};
       send(msg);
     }
   }
