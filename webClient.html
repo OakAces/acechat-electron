@@ -22,7 +22,7 @@
 
       </div>
 
-      <button class="logout-button"name="logout"type="button">LOGOUT</button>
+      <button class="logout-button"name="logout"type="button" onclick="logout();">LOGOUT</button>
     </div>
 
     <!--top bar-->
@@ -96,8 +96,9 @@
 		var msg = JSON.parse(event.data);
 		//do something
 		switch(msg.command){ 
+			case "test":break;
 		}
-	}
+	};
 
   //login with server
   var userName = document.cookie.split('=')[1];
@@ -110,7 +111,7 @@
   //gets user list from server, returns as array of strings
   function usrList()
   {
-		msg = {
+		var msg = {
 						"command" : "USERLIST",
 						"args" : []
 					};
@@ -166,7 +167,7 @@
   }
 
   function createCookie(name,value,days) 
-  
+	{
     if (days) {
       var date = new Date();
       date.setTime(date.getTime()+(days*24*60*60*1000));
@@ -178,6 +179,15 @@
     }
     document.cookie = name+"="+value+expires+"; path=/";
   }
+	
+	function logout()
+	{
+  	part(channels);
+		createCookie("user","",-1);
+		sock.close();
+		window.location="login.html";
+
+	}
   
   function parseInput()
   {
@@ -203,10 +213,7 @@
     //parts all channels, logs out
     else if (msgTxt.match(/^\(logoff\)(\s|$)/) || msgTxt.match(/^\(logout\)(\s|$)/))
     {
-      part(channels);
-      createCookie("user","",-1);
-			sock.close();
-      window.location="login.html";
+			logout();
     }
 
     //default, send message to current channel
