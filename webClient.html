@@ -16,9 +16,10 @@
       <h3>
 				Channel List
       </h3>
-      <div class="channel-list">
+      <div id="channel-list">
 
       <!-- TODO : POPULATE WITH CHANNELS FROM SERVER -->
+			<button class="channel-button">test</button>
 
       </div>
 
@@ -27,7 +28,7 @@
 
     <!--top bar-->
     <div class="top-bar">
-		<code id="channel-title">Default Channel</code>
+		<code id="channel-title">test</code>
     </div>
 
     <!--right -->
@@ -66,14 +67,26 @@
   
 <script src ="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 <script type="text/javascript">
-  
+	
+
   //current channel
   var channel = "Default Channel";
 
   //channels currently "joined"
-  var channels = ["default"];
+  var channels = [channel];
 
+	//store lists retrieved from server
+	var chanList = channels;
+
+	//DEBUG
+	chanList.push("Other Channel");
+
+
+	var usrList = ["Dan"];
 	var sock = new WebSocket("ws://127.0.0.1/server.py");
+
+	joinChannel(channel);
+
 
   //must be logged in to access this page
   if(!document.cookie)
@@ -85,6 +98,21 @@
 	{
 		document.getElementById("channel-title").innerHTML = channel;
 	}
+	function populateChannelList()
+	{
+		console.log("populateChannelList");
+		document.getElementById("channel-list").innerHTML="";
+		for(var i=0;i<chanList.length;++i)
+		{
+			var btn = '<button class="channel-button" onclick="joinChannel(\''+chanList[i]+'\');"><code>'+chanList[i]+'</code></button>';
+			document.getElementById("channel-list").innerHTML+=btn+"<br>";
+		}
+	}
+
+	window.onload=function()
+	{ 
+		//populateChannelList();
+	};
 
   //sends object to sever
   function send(e)
@@ -98,7 +126,12 @@
 		var msg = JSON.parse(event.data);
 		//do something
 		switch(msg.command){ 
-			case "test":break;
+			case "USERLIST":
+				usrList = msg.args;
+				break;
+			case "CHANLIST":
+				chanList = msg.args;
+				break;
 		}
 	};
 
@@ -111,27 +144,37 @@
   send(usrMsg);
 
   //gets user list from server, returns as array of strings
-  function usrList()
+  function requestUsrList()
   {
 		var msg = {
 						"command" : "USERLIST",
 						"args" : []
 					};
 		send(msg);
-
-		//get list from server?
-		var list;
-    return list;
   }
 
-  //joins the channels specified by an array of strings
-  function join(e)
+  //joins the channels specified by a string
+  function joinChannel(e)
   {
-    var msg = {
-								"command" : "JOIN",
-								"args" : e
-							};
-    send(msg);
+		console.log(e);
+		populateChannelList();
+		if (!!~channels.indexOf(e))
+		{
+			channel = e;
+			updateTopBar();
+		}
+		else
+		{
+			var msg = {
+									"command" : "JOIN",
+									"args" : [e]
+								};
+			send(msg);
+			channels.push(e);
+			channel = e;
+			updateTopBar();
+			populateChannelList();
+		}
   }
 
   //leaves the channels specified by an array of strings 
@@ -142,6 +185,7 @@
 								"args" : e
 							};
     send(msg);
+		//TODO remove e from channels
   }
 
   //invite users to channel
@@ -156,16 +200,13 @@
   }
 
   //list channels on server
-  function chanlist()
+  function requestChanList()
   {
     var msg = {
 								"command" : "CHANLIST",
 								"args" : []
 							};
-    send(msg);
     send(msg); //get list from server?
-		var list;
-		return list;
   }
 
   function createCookie(name,value,days) 
@@ -197,9 +238,11 @@
     var msgArr = msgTxt.split(" ");
     var msg;
     document.getElementById("chat-prompt").value = "";
+populateChannelList();
+updateTopBar();
     
     //if input begins with /validUsrName, send private message
-    if (msgTxt.match(/^\/msg(\s|$)/) && !!~usrList().indexOf(msgArr[1]))
+    if (msgTxt.match(/^\/msg(\s|$)/) && !!~usrList.indexOf(msgArr[1]))
     {
       msgArr.shift();
       msgArr.shift();
@@ -210,6 +253,13 @@
 						};
       send(msg);
     }
+
+		//join
+		else if(msgTxt.match(/^\/join\s+s*[^\s<>][^<>]+/))
+		{
+			msgArr.shift();
+			joinChannel(msgArr.join(" ").trim());
+		}
 
     //logout, logoff
     //parts all channels, logs out
@@ -228,8 +278,4 @@
       send(msg);
     }
   }
-
-
 </script>
-
-
