@@ -60,7 +60,7 @@ code
   background-color:black;
   float:right;
 }
-.online-list
+#online-list
 {
   background-color:#404040;
   width:94%;
@@ -73,7 +73,7 @@ code
   overflow: hidden;
   background: black;
 }
-.chat-log
+#chat-log
 {
   height: 94%;
   width:99%;
