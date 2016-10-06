@@ -14,21 +14,21 @@
   <body class="body">
     <div class="left-column">
       <h3>
-	Channel List
+				Channel List
       </h3>
-      <div class="channel-list">
+      <div id="channel-list">
 
       <!-- TODO : POPULATE WITH CHANNELS FROM SERVER -->
+			<button class="channel-button">test</button>
 
       </div>
 
-      <button class="logout-button"name="logout"type="button">LOGOUT</button>
+      <button class="logout-button"name="logout"type="button" onclick="logout();">LOGOUT</button>
     </div>
 
     <!--top bar-->
     <div class="top-bar">
-      <!-- TODO : Populate from server-->
-      Channel Name
+		<code id="channel-title">test</code>
     </div>
 
     <!--right -->
@@ -47,7 +47,6 @@
 	<!-- TODO : Populate from server-->
       </div>
 
-
       <!-- TODO : Send to server -->
       <div class="textarea">
 	>&nbsp
@@ -64,18 +63,30 @@
 
   </body>
 
-
 </html>
   
-  
-  
+<script src ="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 <script type="text/javascript">
-  
+	
+
   //current channel
-  var channel = "default";
+  var channel = "Default Channel";
 
   //channels currently "joined"
-  var channels = ["default"];
+  var channels = [channel];
+
+	//store lists retrieved from server
+	var chanList = channels;
+
+	//DEBUG
+	chanList.push("Other Channel");
+
+
+	var usrList = ["Dan"];
+	var sock = new WebSocket("ws://127.0.0.1/server.py");
+
+	joinChannel(channel);
+
 
   //must be logged in to access this page
   if(!document.cookie)
@@ -83,46 +94,98 @@
     window.location="login.html";
   }
 
+	function updateTopBar()
+	{
+		document.getElementById("channel-title").innerHTML = channel;
+	}
+	function populateChannelList()
+	{
+		console.log("populateChannelList");
+		document.getElementById("channel-list").innerHTML="";
+		for(var i=0;i<chanList.length;++i)
+		{
+			var btn = '<button class="channel-button" onclick="joinChannel(\''+chanList[i]+'\');"><code>'+chanList[i]+'</code></button>';
+			document.getElementById("channel-list").innerHTML+=btn+"<br>";
+		}
+	}
+
+	window.onload=function()
+	{ 
+		//populateChannelList();
+	};
+
   //sends object to sever
   function send(e)
-  {}
+  {
+		sock.send(JSON.stringify(e));
+	}
+
+	//recieve data from server
+	sock.onmessage = function(event)
+	{
+		var msg = JSON.parse(event.data);
+		//do something
+		switch(msg.command){ 
+			case "USERLIST":
+				usrList = msg.args;
+				break;
+			case "CHANLIST":
+				chanList = msg.args;
+				break;
+		}
+	};
 
   //login with server
   var userName = document.cookie.split('=')[1];
   var usrMsg = {
-	    "command" : "USER",
-	    "args" : [userName]
-	   };
+									"command" : "USER",
+									"args" : [userName]
+							 };
   send(usrMsg);
 
   //gets user list from server, returns as array of strings
-  function usrList()
+  function requestUsrList()
   {
-    return [userName];
+		var msg = {
+						"command" : "USERLIST",
+						"args" : []
+					};
+		send(msg);
   }
 
-  //gets channel list from server, returns as array of strings
-  function channelList()
-  {}
-
-  //joins the channels specified by an array of strings
-  function join(e)
+  //joins the channels specified by a string
+  function joinChannel(e)
   {
-    var msg = {
-	    "command" : "JOIN",
-	    "args" : e
-	  };
-    send(msg);
+		console.log(e);
+		populateChannelList();
+		if (!!~channels.indexOf(e))
+		{
+			channel = e;
+			updateTopBar();
+		}
+		else
+		{
+			var msg = {
+									"command" : "JOIN",
+									"args" : [e]
+								};
+			send(msg);
+			channels.push(e);
+			channel = e;
+			updateTopBar();
+			populateChannelList();
+		}
   }
 
   //leaves the channels specified by an array of strings 
   function part(e)
   {
     var msg = {
-	    "command" : "PART",
-	    "args" : e
-	  };
+								"command" : "PART",
+								"args" : e
+							};
     send(msg);
+		//TODO remove e from channels
   }
 
   //invite users to channel
@@ -130,26 +193,24 @@
   function invite(e)
   {
     var msg = {
-	    "command" : "INVITE",
-	    "args" : e
-	  };
+								"command" : "INVITE",
+								"args" : e
+							};
     send(msg);
   }
 
   //list channels on server
-  function chanlist()
+  function requestChanList()
   {
     var msg = {
-	    "command" : "CHANLIST",
-	    "args" : []
-	  };
-    send(msg);
+								"command" : "CHANLIST",
+								"args" : []
+							};
+    send(msg); //get list from server?
   }
 
-  
-
   function createCookie(name,value,days) 
-  {
+	{
     if (days) {
       var date = new Date();
       date.setTime(date.getTime()+(days*24*60*60*1000));
@@ -161,6 +222,15 @@
     }
     document.cookie = name+"="+value+expires+"; path=/";
   }
+	
+	function logout()
+	{
+  	part(channels);
+		createCookie("user","",-1);
+		sock.close();
+		window.location="login.html";
+
+	}
   
   function parseInput()
   {
@@ -168,41 +238,44 @@
     var msgArr = msgTxt.split(" ");
     var msg;
     document.getElementById("chat-prompt").value = "";
+populateChannelList();
+updateTopBar();
     
     //if input begins with /validUsrName, send private message
-    if (msgTxt.match(/^\(msg\)(\s|$)/) && !!~usrList().indexOf(msgArr[1]))
+    if (msgTxt.match(/^\/msg(\s|$)/) && !!~usrList.indexOf(msgArr[1]))
     {
       msgArr.shift();
       msgArr.shift();
       msgTxt = msgArr.join(" ");
       msg = {
-	      "command" : "PRIVMSG",
-	      "args" : [msgArr[1],msgTxt]
-	    };
+							"command" : "PRIVMSG",
+							"args" : [msgArr[1],msgTxt]
+						};
       send(msg);
     }
+
+		//join
+		else if(msgTxt.match(/^\/join\s+s*[^\s<>][^<>]+/))
+		{
+			msgArr.shift();
+			joinChannel(msgArr.join(" ").trim());
+		}
 
     //logout, logoff
     //parts all channels, logs out
-    else if (msgTxt.match(/^\(logoff\)(\s|$)/) || msgTxt.match(/^\(logout\)(\s|$)/))
+    else if (msgTxt.match(/^\/logoff(\s|$)/) || msgTxt.match(/^\/logout(\s|$)/))
     {
-      part(channels);
-      createCookie("user","",-1);
-      window.location="login.html";
+			logout();
     }
 
     //default, send message to current channel
-    else
-    {
+    else if (msgTxt != "" && msgTxt != null)
+		{
       msg = {
               "command" : "MSG",
-	      "args" : [channel, msgTxt]
-	  
-	    };
+							"args" : [channel, msgTxt]
+						};
       send(msg);
     }
   }
-
 </script>
-
-

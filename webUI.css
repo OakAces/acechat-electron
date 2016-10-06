@@ -19,7 +19,7 @@
   float:left;
   height: 100%;
 }
-.channel-list
+#channel-list
 {
   background-color:#404040;
   width:94%;
@@ -34,6 +34,10 @@
   color:white;
   float:right;
   height: 3%;
+}
+code
+{
+	font-size: x-large;
 }
 .logout-button
 {
