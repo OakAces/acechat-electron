@@ -4,10 +4,6 @@
 	    be tested locally in a different browser
 -->
 
-<!-- FURTHER NOTE:: Ironically, I believe we are switching to the chrome socket
-			api, so this will ONLY work in chrome. Must be tested online.
--->
-
 <html>
   <head>
 
@@ -72,6 +68,14 @@
 
   //current channel
   var channel = new channelClass("Default Channel");
+	var testMsg = {
+									"user" : "nathalie",
+									"command" : "MSG",
+									"args" : ["Default Channel","This is a test of the emergency preparedness system"],
+									"timestamp" : 1326439500
+								};
+
+	channel.messages.push(testMsg);
 
   //channels currently "joined"
   var channels = [channel];
@@ -100,9 +104,9 @@
 	{
 		document.getElementById("channel-title").innerHTML = channel.name;
 	}
+
 	function populateChannelList()
 	{
-		console.log("populateChannelList");
 		document.getElementById("channel-list").innerHTML="";
 		for(var i=0;i<chanList.length;++i)
 		{
@@ -115,12 +119,13 @@
 	function channelClass(name)
 	{
 		this.name = name;
-		this.messages = ["Welcome to " + this.name];
+		//messages is a list of JSON object messages from the server.
+		//client messages must be wrapped in JSON objects
+		this.messages = [];
 	}
 	
 	function populateOnlineList()
 	{
-		console.log("populateOnlineList");
 		document.getElementById("online-list").innerHTML="";
 		for(var i=0;i<usrList.length;++i)
 		{
@@ -147,9 +152,11 @@
 		switch(msg.command){ 
 			case "USERLIST":
 				usrList = msg.args;
+				populateOnlineList();
 				break;
 			case "CHANLIST":
 				chanList = msg.args;
+				populateChannelList();
 				break;
 		}
 	};
@@ -168,7 +175,7 @@
 		var msg = {
 						"command" : "USERLIST",
 						"args" : []
-					};
+							};
 		send(msg);
   }
 
@@ -193,6 +200,7 @@
 		{
 			channel = tmp;
 			updateTopBar();
+			printChannelMessages(tmp);
 		}
 		else
 		{
@@ -206,15 +214,23 @@
 			channel = tmp;
 			updateTopBar();
 			populateChannelList();
+			printChannelMessages(tmp);
 		}
   }
 
   //leaves the channels specified by an array of channelObjs
   function part(e)
   {
+
+		var arr;
+		for (var c in e)
+		{
+			if(c.name)
+				arr.push(c.name);
+		}
     var msg = {
 								"command" : "PART",
-								"args" : e.name
+								"args" : c
 							};
     send(msg);
 		//TODO remove e from channels
@@ -263,7 +279,25 @@
 		window.location="login.html";
 
 	}
-  
+
+	function printChannelMessages(e)
+	{
+		console.log("printChannelMessages");
+		document.getElementById("chat-log").innerHTML="";
+
+		for(var i in e.messages)
+		{
+			if(i.args && i.args[1])
+			{
+				console.log("success!");
+				var msg="";
+				msg += i.timestamp+"\t"+i.user+"\t"+i.args[i];
+				document.getElementById("chat-log").innerHTML+="<code>"+msg+"</code>";
+			}
+
+		}
+	}
+
   function parseInput()
   {
     var msgTxt = document.getElementById("chat-prompt").value;
