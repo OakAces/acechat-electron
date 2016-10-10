@@ -469,7 +469,7 @@ updateTopBar();
     }
 
 		//join
-		else if(msgTxt.match(/^\/join\s+[^\s<>][^<>]+/))
+		else if(msgTxt.match(/^\/join\s+[^\s<>][^<>]*/))
 		{
 			msgArr.shift();
 			arr = msgArr.join(" ").match(/[^<>]+/);
@@ -477,7 +477,7 @@ updateTopBar();
 		}
 		
 		//part
-		else if(msgTxt.match(/^\/part\s+[^\s<>][^<>]+/))
+		else if(msgTxt.match(/^\/part\s+[^\s<>][^<>]*/))
 		{
 			msgArr.shift();
 			arr = msgArr.join(" ").match(/[^<>]+/);
