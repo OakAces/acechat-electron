@@ -150,8 +150,51 @@
 				chanList = msg.args;
 				populateChannelList();
 				break;
+			case "MSG":
+				getChannel(msg.args[0]).messages.push(msg);
+				if(channel == getChannel(msg.args[0]))
+					printChannelMessages(channel);
+				break;
+			case "PRIVMSG":
+				for(var i in channels)
+				{
+					channels[i].messages.push(msg);
+				}
+				printChannelMessages(channel);
+				break;
+			case "JOIN":
+				var tmp =""+msg.user+" JOINED "+msg.args[0];
+				msg.user = "AceChat";
+				msg.args.push(tmp);
+				getChannel(msg.args[0]).messages.push(tmp);
+				if(channel == getChannel(msg.args[0]))
+					printChannelMessages(channel);
+				break;
+			case "PART":
+				var tmp =""+msg.user+" PARTED "+msg.args[0];
+				msg.user = "AceChat";
+				msg.args.push(tmp);
+				getChannel(msg.args[0]).messages.push(tmp);
+				if(channel == getChannel(msg.args[0]))
+					printChannelMessages(channel);
+				break;
+
+
 		}
 	};
+
+	//input: channel name (string)
+	//output: channelObj
+	function getChannel(s)
+	{
+		for(var i in chanList)
+		{
+			if(chanList[i].name == s)
+				return chanList[i];
+		}
+		return null;
+	}
+
 
   //login with server
   var userName = document.cookie.split('=')[1];
@@ -292,25 +335,21 @@
 	//param: channelObj
 	function printChannelMessages(e)
 	{
-		console.log("printChannelMessages");
 		document.getElementById("chat-log").innerHTML="";
 		if(e.messages)
 		{
-			console.log("messages found: "+e.messages.length);
 			for(var i in e.messages)
 			{
-				if(e.messages[i])
-					console.log("message found");
-				if(e.messages[i].args)
-					console.log("message args found");
 				if(e.messages[i].args && e.messages[i].args[1])
 				{
-					console.log("message text found");
 					var msgHeader="";
 					var msgText="";
 					var d = new Date(e.messages[i].timestamp*1000);
 					var ts = "" + d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
-					msgHeader += ts+"  "+e.messages[i].user+" > ";
+					msgHeader += ts+"  ";
+					if(e.messages[i].command=="PRIVMSG")
+						msgHeader += "[PRIVATE]";
+					msgHeader += e.messages[i].user+" > ";
 					msgText += e.messages[i].args[1];
 					document.getElementById("chat-log").innerHTML+="<div class=\"msgHeader\"><code>"+msgHeader+"<code></div>";
 					document.getElementById("chat-log").innerHTML+="<div class=\"msgText\"><code>"+msgText+"</code></div>";
