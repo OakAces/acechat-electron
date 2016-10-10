@@ -5,6 +5,18 @@
 		you can change colors if you want lol
 */
 
+.msgText
+{
+	width: 70%;
+	display: inline;
+}
+.msgHeader
+{
+	width: 30%;
+	text-align: justify;
+	text-align-last: justify;
+	display: inline;
+}
 
 .channel-button
 {
@@ -45,7 +57,7 @@
 }
 code
 {
-	font-size: x-large;
+	/*font-size: x-large;*/
 }
 .logout-button
 {

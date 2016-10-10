@@ -68,14 +68,7 @@
 
   //current channel
   var channel = new channelClass("Default Channel");
-	var testMsg = {
-									"user" : "nathalie",
-									"command" : "MSG",
-									"args" : ["Default Channel","This is a test of the emergency preparedness system"],
-									"timestamp" : 1326439500
-								};
-
-	channel.messages.push(testMsg);
+	welcomeMsg(channel);
 
   //channels currently "joined"
   var channels = [channel];
@@ -85,7 +78,6 @@
 	var usrList = [];
 
 	//DEBUG
-	chanList.push(new channelClass("Other Channel"));
 	usrList.push("Dan");
 	usrList.push("Anthony");
 
@@ -169,6 +161,20 @@
 							 };
   send(usrMsg);
 
+
+	function welcomeMsg(e)
+	{
+		var welcome = {
+										"user" : "AceChat",
+										"command" : "MSG",
+										"args" : [e.name,"Welcome to "+ e.name],
+										"timestamp" : new Date().getTime()/1000
+									};
+		e.messages.push(welcome);
+
+	}
+
+
   //gets user list from server, returns as array of strings
   function requestUsrList()
   {
@@ -200,10 +206,11 @@
 		{
 			channel = tmp;
 			updateTopBar();
-			printChannelMessages(tmp);
+			printChannelMessages(channel);
 		}
 		else
 		{
+
 			var msg = {
 									"command" : "JOIN",
 									"args" : [e]
@@ -212,6 +219,8 @@
 			tmp = new channelClass(e);
 			channels.push(tmp);
 			channel = tmp;
+						welcomeMsg(channel);
+
 			updateTopBar();
 			populateChannelList();
 			printChannelMessages(tmp);
@@ -280,21 +289,33 @@
 
 	}
 
+	//param: channelObj
 	function printChannelMessages(e)
 	{
 		console.log("printChannelMessages");
 		document.getElementById("chat-log").innerHTML="";
-
-		for(var i in e.messages)
+		if(e.messages)
 		{
-			if(i.args && i.args[1])
+			console.log("messages found: "+e.messages.length);
+			for(var i in e.messages)
 			{
-				console.log("success!");
-				var msg="";
-				msg += i.timestamp+"\t"+i.user+"\t"+i.args[i];
-				document.getElementById("chat-log").innerHTML+="<code>"+msg+"</code>";
+				if(e.messages[i])
+					console.log("message found");
+				if(e.messages[i].args)
+					console.log("message args found");
+				if(e.messages[i].args && e.messages[i].args[1])
+				{
+					console.log("message text found");
+					var msgHeader="";
+					var msgText="";
+					var d = new Date(e.messages[i].timestamp*1000);
+					var ts = "" + d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
+					msgHeader += ts+"  "+e.messages[i].user+" > ";
+					msgText += e.messages[i].args[1];
+					document.getElementById("chat-log").innerHTML+="<div class=\"msgHeader\"><code>"+msgHeader+"<code></div>";
+					document.getElementById("chat-log").innerHTML+="<div class=\"msgText\"><code>"+msgText+"</code></div>";
+				}
 			}
-
 		}
 	}
 
