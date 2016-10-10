@@ -5,19 +5,20 @@
 		you can change colors if you want lol
 */
 
-.msgText
+#msgText
 {
+	float: right;
+	display: inline-block;
 	width: 70%;
-	display: inline;
+	height:100%;
 }
-.msgHeader
+#msgHeader
 {
+	float: left;
+	height:100%;
+	display: inline-block;
 	width: 30%;
-	text-align: justify;
-	text-align-last: justify;
-	display: inline;
 }
-
 .channel-button
 {
   background : none;

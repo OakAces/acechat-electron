@@ -43,6 +43,10 @@
     <!--center-->
     <div class="center">
       <div id="chat-log">
+				<div id="msgHeader">
+				</div>
+				<div id="msgTxt">
+				</div>
       </div>
 
       <div class="textarea">
@@ -69,12 +73,13 @@
   //current channel
   var channel = new channelClass("Default Channel");
 	welcomeMsg(channel);
+	chanMsg(channel);
 
   //channels currently "joined"
   var channels = [channel];
+	var chanList = channels;
 
 	//store lists retrieved from server
-	var chanList = channels;
 	var usrList = [];
 
 	//DEBUG
@@ -183,6 +188,11 @@
 		}
 	};
 
+	window.onload = function focus()
+	{
+		document.getElementById('chat-prompt').focus();
+	};
+
 	//input: channel name (string)
 	//output: channelObj
 	function getChannel(s)
@@ -198,6 +208,8 @@
 
   //login with server
   var userName = document.cookie.split('=')[1];
+	if(userName.toLowerCase() == "acechat" || userName.match(/[<>]+/))
+		logout();
   var usrMsg = {
 									"command" : "USER",
 									"args" : [userName]
@@ -205,15 +217,27 @@
   send(usrMsg);
 
 
-	function welcomeMsg(e)
+	function chanMsg(e)
 	{
 		var welcome = {
 										"user" : "AceChat",
-										"command" : "MSG",
+										"command" : "PRIVMSG",
 										"args" : [e.name,"Welcome to "+ e.name],
 										"timestamp" : new Date().getTime()/1000
 									};
 		e.messages.push(welcome);
+
+	}
+	function welcomeMsg(e)
+	{
+		var welcome = {
+										"user" : "AceChat",
+										"command" : "PRIVMSG",
+										"args" : [e.name,"Welcome to AceChat! Type /help for a list of commands"],
+										"timestamp" : new Date().getTime()/1000
+									};
+		e.messages.push(welcome);
+
 
 	}
 
@@ -245,7 +269,7 @@
 				tmp = channels[i];
 			}
 		}
-		if (found)
+		if (!!channels && found)
 		{
 			channel = tmp;
 			updateTopBar();
@@ -262,8 +286,7 @@
 			tmp = new channelClass(e);
 			channels.push(tmp);
 			channel = tmp;
-						welcomeMsg(channel);
-
+			chanMsg(channel);
 			updateTopBar();
 			populateChannelList();
 			printChannelMessages(tmp);
@@ -285,7 +308,20 @@
 								"args" : c
 							};
     send(msg);
-		//TODO remove e from channels
+
+		for (var i in e)
+		{
+			var tmp = channels.indexOf(e[i]);
+			if(tmp > -1)
+				channels.splice(tmp,1);
+		}
+		populateChannelList();
+		if(!!!channels)
+			logout();
+		if(channels.indexOf(channel) == -1)
+		{
+			joinChannel(channels[0].name);
+		}
   }
 
   //invite users to channel
@@ -322,10 +358,59 @@
     }
     document.cookie = name+"="+value+expires+"; path=/";
   }
+
+	//I'm so sorry
+	function help()
+	{
+		//join
+		msgTxt = "/join &lt;channel&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+			+ "join a channel<br>";
+
+		//part
+		msgTxt += "/part &lt;channel&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+			+ "leave a channel<br>";
+
+		//logoff
+		msgTxt += "/logoff&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+			+ "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+			+ "part all channels and quit<br>";
+
+		//logout
+		msgTxt += "/logout&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+			+ "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+			+ "same as /logoff<br>";
+
+		//msg
+		msgTxt += "/msg &lt;UserName&gt; &lt;Message&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+			+ " private message a user<br>";
+
+		//whoami
+		msgTxt += "/whoami&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+			+ "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+			+ "computer aided introspection<br>";
+
+		//standard message
+		msgTxt += "&lt;message&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+			+ "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+			+ "send message to your current channel<br>";
+
+		//help
+		msgTxt += "/help&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+			+ "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+			+ "show this dialog";
+		msg = {
+						"user" : "AceChat",
+						"command" : "PRIVMSG",
+						"args" : [channel, msgTxt],
+						"timestamp" : new Date().getTime()/1000
+					};	
+		channel.messages.push(msg);
+		printChannelMessages(channel);
+	}
+
 	
 	function logout()
 	{
-  	part(channels);
 		createCookie("user","",-1);
 		sock.close();
 		window.location="login.html";
@@ -335,7 +420,8 @@
 	//param: channelObj
 	function printChannelMessages(e)
 	{
-		document.getElementById("chat-log").innerHTML="";
+		document.getElementById("msgHeader").innerHTML="";
+		document.getElementById("msgTxt").innerHTML="";
 		if(e.messages)
 		{
 			for(var i in e.messages)
@@ -343,16 +429,16 @@
 				if(e.messages[i].args && e.messages[i].args[1])
 				{
 					var msgHeader="";
-					var msgText="";
+					var msgText="&nbsp;";
 					var d = new Date(e.messages[i].timestamp*1000);
-					var ts = "" + d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
+					var ts = "" + ("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2)+":"+("0"+d.getSeconds()).slice(-2);
 					msgHeader += ts+"  ";
 					if(e.messages[i].command=="PRIVMSG")
-						msgHeader += "[PRIVATE]";
+						msgHeader += "[PRV]";
 					msgHeader += e.messages[i].user+" > ";
 					msgText += e.messages[i].args[1];
-					document.getElementById("chat-log").innerHTML+="<div class=\"msgHeader\"><code>"+msgHeader+"<code></div>";
-					document.getElementById("chat-log").innerHTML+="<div class=\"msgText\"><code>"+msgText+"</code></div>";
+					document.getElementById("msgHeader").innerHTML+="<code>"+msgHeader+"</code><br><br>";
+					document.getElementById("msgTxt").innerHTML+="<code>"+msgText+"</code><br><br>";
 				}
 			}
 		}
@@ -364,6 +450,7 @@
     var msgArr = msgTxt.split(" ");
     var msg;
     document.getElementById("chat-prompt").value = "";
+requestChanList();
 populateChannelList();
 populateOnlineList();
 updateTopBar();
@@ -382,19 +469,47 @@ updateTopBar();
     }
 
 		//join
-		else if(msgTxt.match(/^\/join\s+s*[^\s<>][^<>]+/))
+		else if(msgTxt.match(/^\/join\s+[^\s<>][^<>]+/))
 		{
 			msgArr.shift();
 			arr = msgArr.join(" ").match(/[^<>]+/);
 			joinChannel(arr[0].trim());
+		}
+		
+		//part
+		else if(msgTxt.match(/^\/part\s+[^\s<>][^<>]+/))
+		{
+			msgArr.shift();
+			arr = msgArr.join(" ").match(/[^<>]+/);
+			part([getChannel(arr[0].trim())]);
 		}
 
     //logout, logoff
     //parts all channels, logs out
     else if (msgTxt.match(/^\/logoff(\s|$)/) || msgTxt.match(/^\/logout(\s|$)/))
     {
+			part(channels);
 			logout();
     }
+
+		//whoami
+		else if (msgTxt.match(/^\/whoami\s*/))
+		{
+			msg = {
+							"user" : "AceChat",
+							"command" : "PRIVMSG",
+							"args" : [channel, userName],
+							"timestamp" : new Date().getTime()/1000
+						};
+			channel.messages.push(msg);
+			printChannelMessages(channel);
+		}
+
+		//help
+		else if (msgTxt.match(/^\/help\s*/))
+		{
+			help();
+		}
 
     //default, send message to current channel
     else if (msgTxt != "" && msgTxt != null)
