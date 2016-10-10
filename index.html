@@ -18,7 +18,6 @@
       </h3>
       <div id="channel-list">
 
-      <!-- TODO : POPULATE WITH CHANNELS FROM SERVER -->
 			<button class="channel-button">test</button>
 
       </div>
@@ -36,18 +35,16 @@
       <h3>
 	Online
       </h3>
-      <!-- TODO : POPULATE WITH USERS FROM SERVER -->
-      <div class="online-list">
+      <div id="online-list">
+				<button class="online-button">test</button>
       </div>
     </div>
 
     <!--center-->
     <div class="center">
-      <div class="chat-log">
-	<!-- TODO : Populate from server-->
+      <div id="chat-log">
       </div>
 
-      <!-- TODO : Send to server -->
       <div class="textarea">
 	>&nbsp
 	<div class="textbox">
@@ -70,22 +67,23 @@
 	
 
   //current channel
-  var channel = "Default Channel";
+  var channel = new channelClass("Default Channel");
+	welcomeMsg(channel);
 
   //channels currently "joined"
   var channels = [channel];
 
 	//store lists retrieved from server
 	var chanList = channels;
+	var usrList = [];
 
 	//DEBUG
-	chanList.push("Other Channel");
+	usrList.push("Dan");
+	usrList.push("Anthony");
 
-
-	var usrList = ["Dan"];
 	var sock = new WebSocket("ws://127.0.0.1/server.py");
 
-	joinChannel(channel);
+	joinChannel(channel.name);
 
 
   //must be logged in to access this page
@@ -96,23 +94,41 @@
 
 	function updateTopBar()
 	{
-		document.getElementById("channel-title").innerHTML = channel;
+		document.getElementById("channel-title").innerHTML = channel.name;
 	}
+
 	function populateChannelList()
 	{
-		console.log("populateChannelList");
 		document.getElementById("channel-list").innerHTML="";
 		for(var i=0;i<chanList.length;++i)
 		{
-			var btn = '<button class="channel-button" onclick="joinChannel(\''+chanList[i]+'\');"><code>'+chanList[i]+'</code></button>';
+			var btn = '<button class="channel-button" onclick="joinChannel(\''+chanList[i].name+'\');"><code>'+chanList[i].name+'</code></button>';
 			document.getElementById("channel-list").innerHTML+=btn+"<br>";
 		}
 	}
 
-	window.onload=function()
-	{ 
-		//populateChannelList();
-	};
+	//define channel as local class
+	function channelClass(name)
+	{
+		this.name = name;
+		//messages is a list of JSON object messages from the server.
+		//client messages must be wrapped in JSON objects
+		this.messages = [];
+	}
+	
+	function populateOnlineList()
+	{
+		document.getElementById("online-list").innerHTML="";
+		for(var i=0;i<usrList.length;++i)
+		{
+			var arg = "'/msg ";
+			arg += usrList[i];
+			arg+=" '";
+			var btn = '<button class="online-button" onclick="getElementById(\'chat-prompt\').value='+arg+'"><code>'+usrList[i]+'</code></button>';
+			document.getElementById("online-list").innerHTML+=btn+"<br>";
+		}
+	}
+
 
   //sends object to sever
   function send(e)
@@ -128,9 +144,11 @@
 		switch(msg.command){ 
 			case "USERLIST":
 				usrList = msg.args;
+				populateOnlineList();
 				break;
 			case "CHANLIST":
 				chanList = msg.args;
+				populateChannelList();
 				break;
 		}
 	};
@@ -143,13 +161,27 @@
 							 };
   send(usrMsg);
 
+
+	function welcomeMsg(e)
+	{
+		var welcome = {
+										"user" : "AceChat",
+										"command" : "MSG",
+										"args" : [e.name,"Welcome to "+ e.name],
+										"timestamp" : new Date().getTime()/1000
+									};
+		e.messages.push(welcome);
+
+	}
+
+
   //gets user list from server, returns as array of strings
   function requestUsrList()
   {
 		var msg = {
 						"command" : "USERLIST",
 						"args" : []
-					};
+							};
 		send(msg);
   }
 
@@ -158,38 +190,63 @@
   {
 		console.log(e);
 		populateChannelList();
-		if (!!~channels.indexOf(e))
+		populateOnlineList();
+		updateTopBar();
+		var found = false;
+		var tmp;
+		for(var i =0;i<channels.length;++i)
 		{
-			channel = e;
+			if(channels[i].name == e)
+			{
+				found = true;
+				tmp = channels[i];
+			}
+		}
+		if (found)
+		{
+			channel = tmp;
 			updateTopBar();
+			printChannelMessages(channel);
 		}
 		else
 		{
+
 			var msg = {
 									"command" : "JOIN",
 									"args" : [e]
 								};
 			send(msg);
-			channels.push(e);
-			channel = e;
+			tmp = new channelClass(e);
+			channels.push(tmp);
+			channel = tmp;
+						welcomeMsg(channel);
+
 			updateTopBar();
 			populateChannelList();
+			printChannelMessages(tmp);
 		}
   }
 
-  //leaves the channels specified by an array of strings 
+  //leaves the channels specified by an array of channelObjs
   function part(e)
   {
+
+		var arr;
+		for (var c in e)
+		{
+			if(c.name)
+				arr.push(c.name);
+		}
     var msg = {
 								"command" : "PART",
-								"args" : e
+								"args" : c
 							};
     send(msg);
 		//TODO remove e from channels
   }
 
   //invite users to channel
-  //args in the form channel, user0, user1,..,usern
+  //args in the form [channel name, user0, user1,..,usern]
   function invite(e)
   {
     var msg = {
@@ -231,7 +288,37 @@
 		window.location="login.html";
 
 	}
-  
+
+	//param: channelObj
+	function printChannelMessages(e)
+	{
+		console.log("printChannelMessages");
+		document.getElementById("chat-log").innerHTML="";
+		if(e.messages)
+		{
+			console.log("messages found: "+e.messages.length);
+			for(var i in e.messages)
+			{
+				if(e.messages[i])
+					console.log("message found");
+				if(e.messages[i].args)
+					console.log("message args found");
+				if(e.messages[i].args && e.messages[i].args[1])
+				{
+					console.log("message text found");
+					var msgHeader="";
+					var msgText="";
+					var d = new Date(e.messages[i].timestamp*1000);
+					var ts = "" + d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
+					msgHeader += ts+"  "+e.messages[i].user+" > ";
+					msgText += e.messages[i].args[1];
+					document.getElementById("chat-log").innerHTML+="<div class=\"msgHeader\"><code>"+msgHeader+"<code></div>";
+					document.getElementById("chat-log").innerHTML+="<div class=\"msgText\"><code>"+msgText+"</code></div>";
+				}
+			}
+		}
+	}
+
   function parseInput()
   {
     var msgTxt = document.getElementById("chat-prompt").value;
@@ -239,6 +326,7 @@
     var msg;
     document.getElementById("chat-prompt").value = "";
 populateChannelList();
+populateOnlineList();
 updateTopBar();
     
     //if input begins with /validUsrName, send private message
@@ -258,7 +346,8 @@ updateTopBar();
 		else if(msgTxt.match(/^\/join\s+s*[^\s<>][^<>]+/))
 		{
 			msgArr.shift();
-			joinChannel(msgArr.join(" ").trim());
+			arr = msgArr.join(" ").match(/[^<>]+/);
+			joinChannel(arr[0].trim());
 		}
 
     //logout, logoff
@@ -273,7 +362,7 @@ updateTopBar();
 		{
       msg = {
               "command" : "MSG",
-							"args" : [channel, msgTxt]
+							"args" : [channel.name, msgTxt]
 						};
       send(msg);
     }

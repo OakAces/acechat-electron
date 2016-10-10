@@ -1,3 +1,23 @@
+/*
+		BE CAREFUL IF YOU CHANGE THIS.
+		DO NOT CHANGE **ANY** SIZES FLOATS ETC WITHOUT CONSULTING WITH NATHALIE
+
+		you can change colors if you want lol
+*/
+
+.msgText
+{
+	width: 70%;
+	display: inline;
+}
+.msgHeader
+{
+	width: 30%;
+	text-align: justify;
+	text-align-last: justify;
+	display: inline;
+}
+
 .channel-button
 {
   background : none;
@@ -37,7 +57,7 @@
 }
 code
 {
-	font-size: x-large;
+	/*font-size: x-large;*/
 }
 .logout-button
 {
@@ -60,7 +80,7 @@ code
   background-color:black;
   float:right;
 }
-.online-list
+#online-list
 {
   background-color:#404040;
   width:94%;
@@ -73,7 +93,7 @@ code
   overflow: hidden;
   background: black;
 }
-.chat-log
+#chat-log
 {
   height: 94%;
   width:99%;
