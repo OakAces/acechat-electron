@@ -363,7 +363,7 @@
 	function help()
 	{
 		//join
-		msgTxt = "/join &lt;channel&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+		msgTxt = "/join &lt;channel&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
 			+ "join a channel<br>";
 
 		//part
@@ -429,7 +429,7 @@
 				if(e.messages[i].args && e.messages[i].args[1])
 				{
 					var msgHeader="";
-					var msgText="&nbsp;";
+					var msgText="";
 					var d = new Date(e.messages[i].timestamp*1000);
 					var ts = "" + ("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2)+":"+("0"+d.getSeconds()).slice(-2);
 					msgHeader += ts+"  ";
