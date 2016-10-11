@@ -4,19 +4,39 @@
 
 		you can change colors if you want lol
 */
-
-#msgText
+#chat-log-wrapper
 {
-	float: right;
-	display: inline-block;
-	width: 70%;
-	height:100%;
+	overflow:auto;
+	height:94%;
+	width:99%;
+  color:white;
+  background: #404040;
 }
-#msgHeader
+#chat-log
 {
-	float: left;
-	height:100%;
-	display: inline-block;
+	display:table;
+	width:100%;
+	column-count: 2;
+	table-layout:fixed;
+}
+.spacer
+{
+	display:table-cell;
+}
+.msgRow
+{
+	display:table-row;
+}
+.msgText
+{
+	width: 70%;
+	display:table-cell;
+	vertical-align:top;
+}
+.msgHeader
+{
+	display:table-cell;
+	vertical-align:top;
 	width: 30%;
 }
 .channel-button
@@ -94,14 +114,7 @@ code
   overflow: hidden;
   background: black;
 }
-#chat-log
-{
-  height: 94%;
-  width:99%;
-  overflow:auto;
-  color:white;
-  background: #404040;
-}
+
 .chat-prompt
 {	
   height: 3%;
@@ -139,6 +152,5 @@ code
 #chat-prompt
 {
   width: 100%;
- /* padding: .5em 1em;*/
 }
 

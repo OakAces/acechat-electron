@@ -42,10 +42,8 @@
 
     <!--center-->
     <div class="center">
-      <div id="chat-log">
-				<div id="msgHeader">
-				</div>
-				<div id="msgTxt">
+			<div id="chat-log-wrapper">
+				<div id="chat-log">
 				</div>
       </div>
 
@@ -208,7 +206,7 @@
 
   //login with server
   var userName = document.cookie.split('=')[1];
-	if(userName.toLowerCase() == "acechat" || userName.match(/[<>]+/))
+	if(userName.toLowerCase() == "acechat" || userName.match(/[<>]+/) || userName.match(/&gt;/) || userName.match(/&lt;/))
 		logout();
   var usrMsg = {
 									"command" : "USER",
@@ -420,8 +418,7 @@
 	//param: channelObj
 	function printChannelMessages(e)
 	{
-		document.getElementById("msgHeader").innerHTML="";
-		document.getElementById("msgTxt").innerHTML="";
+		document.getElementById("chat-log").innerHTML="";
 		if(e.messages)
 		{
 			for(var i in e.messages)
@@ -437,8 +434,11 @@
 						msgHeader += "[PRV]";
 					msgHeader += e.messages[i].user+" > ";
 					msgText += e.messages[i].args[1];
-					document.getElementById("msgHeader").innerHTML+="<code>"+msgHeader+"</code><br><br>";
-					document.getElementById("msgTxt").innerHTML+="<code>"+msgText+"</code><br><br>";
+					msgHeader = "<div class=\"msgHeader\"><code>"+msgHeader+"</code></div>";
+					msgText = "<div class=\"msgText\"><code>"+msgText+"</code></div>";
+
+					document.getElementById("chat-log").innerHTML+="<div class=\"msgRow\">"+msgHeader + msgText+ "</div>";
+					document.getElementById("chat-log").innerHTML+="<div class=\"msgRow\"><div class=\"spacer\"><br></div><div class=\"spacer\"><br></div></div>";
 				}
 			}
 		}
@@ -469,7 +469,7 @@ updateTopBar();
     }
 
 		//join
-		else if(msgTxt.match(/^\/join\s+[^\s<>][^<>]*/))
+		else if(msgTxt.match(/^\/join\s+[^\s<>][^<>]*/) && !msgTxt.match(/&gt;/) && !msgTxt.match(/&lt;/))
 		{
 			msgArr.shift();
 			arr = msgArr.join(" ").match(/[^<>]+/);
