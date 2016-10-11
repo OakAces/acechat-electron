@@ -84,7 +84,7 @@
 	usrList.push("Dan");
 	usrList.push("Anthony");
 
-	var sock = new WebSocket("ws://127.0.0.1/server.py");
+	var sock = new WebSocket("ws://127.0.0.1");
 
 	joinChannel(channel.name);
 
@@ -314,7 +314,7 @@
 				channels.splice(tmp,1);
 		}
 		populateChannelList();
-		if(!!!channels)
+		if(channels.length == 0)
 			logout();
 		if(channels.indexOf(channel) == -1)
 		{
@@ -488,7 +488,6 @@ updateTopBar();
     //parts all channels, logs out
     else if (msgTxt.match(/^\/logoff(\s|$)/) || msgTxt.match(/^\/logout(\s|$)/))
     {
-			part(channels);
 			logout();
     }
 
