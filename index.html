@@ -512,7 +512,14 @@ updateTopBar();
 		{
 			msgArr.shift();
 			arr = msgArr.join(" ").match(/[^<>]+/);
-			part([getChannel(arr[0].trim())]);
+			if(!!~channels.indexOf(arr[0].trim()))
+				part([getChannel(arr[0].trim())]);
+			else
+				errorHandler("You are not in that channel");
+		}
+		else if(msgTxt.match(/^\/part\s+[\s<>]*/g)) 
+		{
+			errorHandler("Invalid channel name");
 		}
 		//part with no args should leave the current channel
 		else if(msgTxt === "/part")
