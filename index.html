@@ -514,6 +514,11 @@ updateTopBar();
 			arr = msgArr.join(" ").match(/[^<>]+/);
 			part([getChannel(arr[0].trim())]);
 		}
+		//part with no args should leave the current channel
+		else if(msgTxt === "/part")
+		{
+			part([channel]);
+		}
 
     //logout, logoff
     //parts all channels, logs out
