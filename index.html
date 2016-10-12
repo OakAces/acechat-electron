@@ -181,7 +181,9 @@
 				if(channel == getChannel(msg.args[0]))
 					printChannelMessages(channel);
 				break;
-
+			case "ERROR":
+				errorHandler(msg.args[0]);
+				break;
 
 		}
 	};
@@ -214,12 +216,29 @@
 							 };
   send(usrMsg);
 
+	//accepts a channel and a string containing an error message. 
+	//server errors must be wrapped in the onmessage function
+	function errorHandler(e)
+	{
+		msg = {
+						"user" : "AceChat",
+						"command" : "ERROR",
+						"args" : [channel,e],
+						"timestamp" : new Date().getTime()/1000
+					};
+
+		channel.messages.push(msg);
+		console.log(e);
+		printChannelMessages(channel);
+		
+	}
+
 
 	function chanMsg(e)
 	{
 		var welcome = {
 										"user" : "AceChat",
-										"command" : "PRIVMSG",
+										"command" : "SYSTEM",
 										"args" : [e.name,"Welcome to "+ e.name],
 										"timestamp" : new Date().getTime()/1000
 									};
@@ -230,7 +249,7 @@
 	{
 		var welcome = {
 										"user" : "AceChat",
-										"command" : "PRIVMSG",
+										"command" : "SYSTEM",
 										"args" : [e.name,"Welcome to AceChat! Type /help for a list of commands"],
 										"timestamp" : new Date().getTime()/1000
 									};
@@ -398,7 +417,7 @@
 			+ "show this dialog";
 		msg = {
 						"user" : "AceChat",
-						"command" : "PRIVMSG",
+						"command" : "SYSTEM",
 						"args" : [channel, msgTxt],
 						"timestamp" : new Date().getTime()/1000
 					};	
@@ -432,6 +451,10 @@
 					msgHeader += ts+"  ";
 					if(e.messages[i].command=="PRIVMSG")
 						msgHeader += "[PRV]";
+					if(e.messages[i].command=="ERROR")
+						msgHeader += "[ERR]";
+					if(e.messages[i].command=="SYSTEM")
+						msgHeader += "[SYS]";
 					msgHeader += e.messages[i].user+" > ";
 					msgText += e.messages[i].args[1];
 					msgHeader = "<div class=\"msgHeader\"><code>"+msgHeader+"</code></div>";
@@ -475,6 +498,10 @@ updateTopBar();
 			arr = msgArr.join(" ").match(/[^<>]+/);
 			joinChannel(arr[0].trim());
 		}
+		else if(msgTxt.match(/(^\/join\s+[\s<>]*)|(^\/join&)/g)) 
+		{
+			errorHandler("Invalid channel name");
+		}
 		
 		//part
 		else if(msgTxt.match(/^\/part\s+[^\s<>][^<>]*/))
@@ -496,7 +523,7 @@ updateTopBar();
 		{
 			msg = {
 							"user" : "AceChat",
-							"command" : "PRIVMSG",
+							"command" : "SYSTEM",
 							"args" : [channel, userName],
 							"timestamp" : new Date().getTime()/1000
 						};
