@@ -498,9 +498,13 @@ updateTopBar();
 			arr = msgArr.join(" ").match(/[^<>]+/);
 			joinChannel(arr[0].trim());
 		}
-		else if(msgTxt.match(/(^\/join\s+[\s<>]*)|(^\/join&)/g)) 
+		else if(msgTxt.match(/^\/join\s+[\s<>]*/g)) 
 		{
 			errorHandler("Invalid channel name");
+		}
+		else if(msgTxt === "/join")
+		{
+			errorHandler("Must enter a channel name");
 		}
 		
 		//part
