@@ -1,5 +1,6 @@
 TODO
 
+autoscroll
 /msg <invalid name> should throw an error
 /fix input sanitization?
 channel online list
