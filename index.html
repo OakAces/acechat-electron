@@ -8,10 +8,11 @@
   <head>
 
     <link rel="stylesheet" type="text/css" href="webUI.css">
+		<title>AceChat</title>
 
   </head>
 
-  <body class="body">
+  <body id="body" class="body">
     <div class="left-column">
       <h3>
 				Channel List
@@ -33,11 +34,15 @@
     <!--right -->
     <div class="right">
       <h3>
-	Online
+				Online
       </h3>
       <div id="online-list">
 				<button class="online-button">test</button>
       </div>
+			<h2 id="online-channel-header">
+			</h2>
+			<div id="online-channel-list">
+			</div>
     </div>
 
     <!--center-->
@@ -64,40 +69,61 @@
 
 </html>
   
-<script src ="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 <script type="text/javascript">
 	
+	//var sock = new WebSocket("ws://nathalietate.xyz:9090");
+	var sock = new WebSocket("ws://localhost:9090");
+
+	var userName;
 
   //current channel
-  var channel = new channelClass("Default Channel");
-	welcomeMsg(channel);
-	chanMsg(channel);
-
-  //channels currently "joined"
-  var channels = [channel];
-	var chanList = channels;
+  var channel="";
 
 	//store lists retrieved from server
 	var usrList = [];
 
-	//DEBUG
-	usrList.push("Dan");
-	usrList.push("Anthony");
+  //channels currently "joined"
+  var channels = [];
+	var chanList = [];
 
-	var sock = new WebSocket("ws://127.0.0.1");
+	sock.onopen= function()
+	{
+		console.log("onopen");
 
-	joinChannel(channel.name);
+		//must be logged in to access this page
+		if(!document.cookie)
+		{
+			window.location="login.html";
+		}
+
+		//login with server
+		userName = document.cookie.split('=')[1];
+		if(userName.toLowerCase() == "acechat" || userName.match(/[<>]+/) || userName.match(/&gt;/) || userName.match(/&lt;/))
+		{
+			logout();
+		}
+		var usrMsg = {
+										"command" : "USER",
+										"args" : [userName]
+								 };
+		send(usrMsg);
+
+		joinChannel("Default Channel",welcomeMsg());
+		requestUsrList();
+		requestChanList();
+	};
+
+	sock.onclose = function()
+	{
+		document.getElementById("body").innerHTML="<p style='color:white'>Failed to connect to server</p>";
+	};
 
 
-  //must be logged in to access this page
-  if(!document.cookie)
-  {
-    window.location="login.html";
-  }
-
+	//updates top bar and online-channel-list
 	function updateTopBar()
 	{
 		document.getElementById("channel-title").innerHTML = channel.name;
+		document.getElementById("online-channel-header").innerHTML = channel.name;
 	}
 
 	function populateChannelList()
@@ -143,6 +169,7 @@
 	sock.onmessage = function(event)
 	{
 		var msg = JSON.parse(event.data);
+		console.log("message received: " + msg.command);
 		//do something
 		switch(msg.command){ 
 			case "USERLIST":
@@ -150,13 +177,19 @@
 				populateOnlineList();
 				break;
 			case "CHANLIST":
-				chanList = msg.args;
+				tmp = msg.args;
+				for(var i in tmp)
+				{
+					if(!getChannel(msg.args[i]))
+						chanList.push(new channelClass(tmp[i]));
+				}
 				populateChannelList();
 				break;
 			case "MSG":
-				getChannel(msg.args[0]).messages.push(msg);
-				if(channel == getChannel(msg.args[0]))
-					printChannelMessages(channel);
+				//TODO fix this shit here
+				console.log(msg.args[0]+": "+msg.args[1]+"\nChannel: "+channel.name);
+				channels[getChannel(msg.args[0])].messages.push(msg);
+				printChannelMessages(channel);
 				break;
 			case "PRIVMSG":
 				for(var i in channels)
@@ -169,16 +202,16 @@
 				var tmp =""+msg.user+" JOINED "+msg.args[0];
 				msg.user = "AceChat";
 				msg.args.push(tmp);
-				getChannel(msg.args[0]).messages.push(tmp);
-				if(channel == getChannel(msg.args[0]))
+				channels[getChannel(msg.args[0])].messages.push(tmp);
+				if(channel == channels[getChannel(msg.args[0])])
 					printChannelMessages(channel);
 				break;
 			case "PART":
 				var tmp =""+msg.user+" PARTED "+msg.args[0];
 				msg.user = "AceChat";
 				msg.args.push(tmp);
-				getChannel(msg.args[0]).messages.push(tmp);
-				if(channel == getChannel(msg.args[0]))
+				channels[getChannel(msg.args[0])].messages.push(tmp);
+				if(channel == channels[getChannel(msg.args[0])])
 					printChannelMessages(channel);
 				break;
 			case "ERROR":
@@ -200,23 +233,13 @@
 		for(var i in chanList)
 		{
 			if(chanList[i].name == s)
-				return chanList[i];
+				return i;
 		}
 		return null;
 	}
 
 
-  //login with server
-  var userName = document.cookie.split('=')[1];
-	if(userName.toLowerCase() == "acechat" || userName.match(/[<>]+/) || userName.match(/&gt;/) || userName.match(/&lt;/))
-		logout();
-  var usrMsg = {
-									"command" : "USER",
-									"args" : [userName]
-							 };
-  send(usrMsg);
-
-	//accepts a channel and a string containing an error message. 
+  	//accepts a channel and a string containing an error message. 
 	//server errors must be wrapped in the onmessage function
 	function errorHandler(e)
 	{
@@ -245,17 +268,15 @@
 		e.messages.push(welcome);
 
 	}
-	function welcomeMsg(e)
+	function welcomeMsg()
 	{
 		var welcome = {
 										"user" : "AceChat",
 										"command" : "SYSTEM",
-										"args" : [e.name,"Welcome to AceChat! Type /help for a list of commands"],
+										"args" : ["Default Channel","Welcome to AceChat! Type /help for a list of commands"],
 										"timestamp" : new Date().getTime()/1000
 									};
-		e.messages.push(welcome);
-
-
+		return welcome;
 	}
 
 
@@ -270,12 +291,9 @@
   }
 
   //joins the channels specified by a string
-  function joinChannel(e)
+	//optional msg
+  function joinChannel(e, s="")
   {
-		console.log(e);
-		populateChannelList();
-		populateOnlineList();
-		updateTopBar();
 		var found = false;
 		var tmp;
 		for(var i =0;i<channels.length;++i)
@@ -290,6 +308,7 @@
 		{
 			channel = tmp;
 			updateTopBar();
+			channel.messages.push(s);
 			printChannelMessages(channel);
 		}
 		else
@@ -303,9 +322,10 @@
 			tmp = new channelClass(e);
 			channels.push(tmp);
 			channel = tmp;
+			channel.messages.push(s);
 			chanMsg(channel);
 			updateTopBar();
-			populateChannelList();
+			requestChanList();
 			printChannelMessages(tmp);
 		}
   }
@@ -437,6 +457,7 @@
 	//param: channelObj
 	function printChannelMessages(e)
 	{
+		console.log("print");
 		document.getElementById("chat-log").innerHTML="";
 		if(e.messages)
 		{
@@ -473,9 +494,8 @@
     var msgArr = msgTxt.split(" ");
     var msg;
     document.getElementById("chat-prompt").value = "";
+requestUsrList();
 requestChanList();
-populateChannelList();
-populateOnlineList();
 updateTopBar();
     
     //if input begins with /validUsrName, send private message
@@ -513,7 +533,7 @@ updateTopBar();
 			msgArr.shift();
 			arr = msgArr.join(" ").match(/[^<>]+/);
 			if(!!~channels.indexOf(arr[0].trim()))
-				part([getChannel(arr[0].trim())]);
+				part([channels[getChannel(arr[0].trim())]]);
 			else
 				errorHandler("You are not in that channel");
 		}
@@ -563,4 +583,5 @@ updateTopBar();
       send(msg);
     }
   }
+
 </script>

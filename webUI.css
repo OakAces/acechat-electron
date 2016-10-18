@@ -16,7 +16,6 @@
 {
 	display:table;
 	width:100%;
-	column-count: 2;
 	table-layout:fixed;
 }
 .spacer
@@ -105,9 +104,20 @@ code
 {
   background-color:#404040;
   width:94%;
-  height:91%;
+  height:50%;
   overflow:auto;
   padding:5px; 
+}
+#online-channel-list
+{
+	background-color:#404040;
+	width:94%;
+	height:41%;
+	overflow:auto;
+}
+#online-channel-header
+{
+	background:#333333;
 }
 .body
 {

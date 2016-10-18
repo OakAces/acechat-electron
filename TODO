@@ -1,0 +1,8 @@
+TODO
+
+new channel button evertime message sends or receives <-- FIX THIS
+
+/msg <invalid name> should throw an error
+/fix input sanitization?
+channel online list
+fix padding on logout button
