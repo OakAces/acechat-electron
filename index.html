@@ -137,7 +137,7 @@
 	}
 
 	//define channel as local class
-	function channelClass(name)
+	function channelObj(name)
 	{
 		this.name = name;
 		//messages is a list of JSON object messages from the server.
@@ -181,7 +181,7 @@
 				for(var i in tmp)
 				{
 					if(!getChannel(msg.args[i]))
-						chanList.push(new channelClass(tmp[i]));
+						chanList.push(new channelObj(tmp[i]));
 				}
 				populateChannelList();
 				break;
@@ -319,7 +319,7 @@
 									"args" : [e]
 								};
 			send(msg);
-			tmp = new channelClass(e);
+			tmp = new channelObj(e);
 			channels.push(tmp);
 			channel = tmp;
 			channel.messages.push(s);
