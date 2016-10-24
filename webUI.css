@@ -6,7 +6,9 @@
 */
 #chat-log-wrapper
 {
-	overflow:auto;
+	overflow-y:auto;
+	overflow-x:hidden;
+	word-wrap: break-word;
 	height:94%;
 	width:99%;
   color:white;
