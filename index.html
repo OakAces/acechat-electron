@@ -71,7 +71,7 @@
   
 <script type="text/javascript">
 	
-	//var sock = new WebSocket("ws://nathalietate.xyz:9090");
+	//var sock = new WebSocket("ws://45.55.80.240");
 	var sock = new WebSocket("ws://localhost:9090");
 
 	var userName;
@@ -400,40 +400,40 @@
 	function help()
 	{
 		//join
-		msgTxt = "/join &lt;channel&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+		msgTxt = "/join &lt;channel&gt;................"
 			+ "join a channel<br>";
 
 		//part
-		msgTxt += "/part [channel]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+		msgTxt += "/part [channel]................"
 			+ "leave a channel<br>";
 
 		//logoff
-		msgTxt += "/logoff&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
-			+ "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+		msgTxt += "/logoff.................."
+			+ "......"
 			+ "part all channels and quit<br>";
 
 		//logout
-		msgTxt += "/logout&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
-			+ "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+		msgTxt += "/logout.................."
+			+ "......"
 			+ "same as /logoff<br>";
 
 		//msg
-		msgTxt += "/msg &lt;UserName&gt; &lt;Message&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+		msgTxt += "/msg &lt;UserName&gt; &lt;Message&gt;....."
 			+ " private message a user<br>";
 
 		//whoami
-		msgTxt += "/whoami&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
-			+ "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+		msgTxt += "/whoami.................."
+			+ "......"
 			+ "computer aided introspection<br>";
 
 		//standard message
-		msgTxt += "&lt;message&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
-			+ "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+		msgTxt += "&lt;message&gt;................."
+			+ "....."
 			+ "send message to your current channel<br>";
 
 		//help
-		msgTxt += "/help&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
-			+ "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+		msgTxt += "/help..................."
+			+ "......."
 			+ "show this dialog";
 		msg = {
 						"user" : "AceChat",
