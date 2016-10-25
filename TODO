@@ -2,6 +2,6 @@ TODO
 
 autoscroll
 /msg <invalid name> should throw an error
-/fix input sanitization?
+change input sanitization to white list
 channel online list
 fix padding on logout button
