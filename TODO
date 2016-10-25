@@ -1,6 +1,5 @@
 TODO
 
-/msg <invalid name> should throw an error
 change input sanitization to white list
 channel online list
 fix padding on logout button
