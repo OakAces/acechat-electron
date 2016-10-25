@@ -484,11 +484,12 @@ updateTopBar();
     if (msgTxt.match(/^\/msg(\s|$)/) && !!~usrList.indexOf(msgArr[1]))
     {
       msgArr.shift();
+			u = msgArr[0];
       msgArr.shift();
       msgTxt = msgArr.join(" ");
       msg = {
 							"command" : "PRIVMSG",
-							"args" : [msgArr[1],msgTxt]
+							"args" : [u,msgTxt]
 						};
       send(msg);
     }
