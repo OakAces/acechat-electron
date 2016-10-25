@@ -1,6 +1,5 @@
 TODO
 
-autoscroll
 /msg <invalid name> should throw an error
 change input sanitization to white list
 channel online list

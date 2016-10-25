@@ -483,8 +483,10 @@
 
 					document.getElementById("chat-log").innerHTML+="<div class=\"msgRow\">"+msgHeader + msgText+ "</div>";
 					document.getElementById("chat-log").innerHTML+="<div class=\"msgRow\"><div class=\"spacer\"><br></div><div class=\"spacer\"><br></div></div>";
+
 				}
 			}
+			document.getElementById("chat-log-wrapper").scrollTop=document.getElementById("chat-log-wrapper").scrollHeight;
 		}
 	}
 
