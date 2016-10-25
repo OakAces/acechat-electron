@@ -88,8 +88,6 @@
 
 	sock.onopen= function()
 	{
-		console.log("onopen");
-
 		//must be logged in to access this page
 		if(!document.cookie)
 		{
@@ -169,7 +167,6 @@
 	sock.onmessage = function(event)
 	{
 		var msg = JSON.parse(event.data);
-		console.log("message received: " + msg.command);
 		//do something
 		switch(msg.command){ 
 			case "USERLIST":
@@ -186,8 +183,6 @@
 				populateChannelList();
 				break;
 			case "MSG":
-				//TODO fix this shit here
-				console.log(msg.args[0]+": "+msg.args[1]+"\nChannel: "+channel.name);
 				channels[getChannel(msg.args[0])].messages.push(msg);
 				printChannelMessages(channel);
 				break;
@@ -251,7 +246,6 @@
 					};
 
 		channel.messages.push(msg);
-		console.log(e);
 		printChannelMessages(channel);
 		
 	}
@@ -444,7 +438,6 @@
 	//param: channelObj
 	function printChannelMessages(e)
 	{
-		console.log("print");
 		document.getElementById("chat-log").innerHTML="";
 		if(e.messages)
 		{
