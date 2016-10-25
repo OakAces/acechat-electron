@@ -480,7 +480,7 @@ requestUsrList();
 requestChanList();
 updateTopBar();
     
-    //if input begins with /validUsrName, send private message
+    //if input begins with /msg validUsrName, send private message
     if (msgTxt.match(/^\/msg(\s|$)/) && !!~usrList.indexOf(msgArr[1]))
     {
       msgArr.shift();
@@ -491,6 +491,12 @@ updateTopBar();
 							"args" : [msgArr[1],msgTxt]
 						};
       send(msg);
+    }
+
+		//if input begins with /msg invalidUsrName, throw error
+		else if (msgTxt.match(/^\/msg(\s|$)/) && !~usrList.indexOf(msgArr[1]))
+    {
+			errorHandler("Invalid User Name");
     }
 
 		//join
