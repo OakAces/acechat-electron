@@ -1,5 +1,5 @@
 TODO
 
 change input sanitization to white list
-channel online list
+// done client side // channel online list
 fix padding on logout button

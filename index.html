@@ -1,7 +1,8 @@
 <!-- NOTE:: This uses a cookie to pass the username from the login screen
 	    to the client screen. Chrome does not support cookies for local 
-	    files. It **should** work in Chrome when deployed, but it must
-	    be tested locally in a different browser
+	    files. It works in Chrome when deployed, but it must
+	    be tested locally in a different browser - no longer true; works locally 
+			in chrome if pointed to local server
 -->
 
 <html>
@@ -81,6 +82,7 @@
 
 	//store lists retrieved from server
 	var usrList = [];
+	var chanUsrList = [];
 
   //channels currently "joined"
   var channels = [];
@@ -117,7 +119,7 @@
 	};
 
 
-	//updates top bar and online-channel-list
+	//updates top bar and online-channel-list header
 	function updateTopBar()
 	{
 		document.getElementById("channel-title").innerHTML = channel.name;
@@ -141,6 +143,19 @@
 		//messages is a list of JSON object messages from the server.
 		//client messages must be wrapped in JSON objects
 		this.messages = [];
+	}
+
+	function populateOnlineChannelList() //notimplemented serverside yet
+	{
+		document.getElementById("online-channel-list").innerHTML="";
+		for(var i=0;i<chanUsrList.length;++i)
+		{
+			var arg = "'/msg ";
+			arg += chanUsrList[i];
+			arg+=" '";
+			var btn = '<button class="online-button" onclick="getElementById(\'chat-prompt\').value='+arg+'"><code>'+chanUsrList[i]+'</code></button>';
+			document.getElementById("online-channel-list").innerHTML+=btn+"<br>";
+		}
 	}
 	
 	function populateOnlineList()
@@ -197,7 +212,7 @@
 				var tmp =""+msg.user+" JOINED "+msg.args[0];
 				msg.user = "AceChat";
 				msg.args.push(tmp);
-				channels[getChannel(msg.args[0])].messages.push(tmp);
+				getChannel(msg.args[0]).messages.push(tmp);
 				if(channel == channels[getChannel(msg.args[0])])
 					printChannelMessages(channel);
 				break;
@@ -483,6 +498,8 @@ updateTopBar();
     //if input begins with /msg validUsrName, send private message
     if (msgTxt.match(/^\/msg(\s|$)/) && !!~usrList.indexOf(msgArr[1]))
     {
+			msgTxt = msgTxt.replace(/</g, "&lt;");
+			msgTxt = msgTxt.replace(/>/g, "&gt;");
       msgArr.shift();
 			u = msgArr[0];
       msgArr.shift();
@@ -501,8 +518,10 @@ updateTopBar();
     }
 
 		//join
-		else if(msgTxt.match(/^\/join\s+[^\s<>][^<>]*/) && !msgTxt.match(/&gt;/) && !msgTxt.match(/&lt;/))
+		else if(msgTxt.match(/^\/join\s+[^\s]+/))
 		{
+			msgTxt = msgTxt.replace(/</g, "&lt;");
+			msgTxt = msgTxt.replace(/>/g, "&gt;");
 			msgArr.shift();
 			arr = msgArr.join(" ").match(/[^<>]+/);
 			joinChannel(arr[0].trim());
@@ -565,6 +584,8 @@ updateTopBar();
     //default, send message to current channel
     else if (msgTxt != "" && msgTxt != null)
 		{
+			msgTxt = msgTxt.replace(/</g, "&lt;");
+			msgTxt = msgTxt.replace(/>/g, "&gt;");
       msg = {
               "command" : "MSG",
 							"args" : [channel.name, msgTxt]
