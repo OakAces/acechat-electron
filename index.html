@@ -538,7 +538,7 @@ updateTopBar();
 		//part
 		else if(msgTxt.match(/^\/part\s+[^\s]+/))
 		{
-			if(channels.indexOf(msgArr[1])>-1)
+			if(channels[getChannel(msgArr[1])])
 				part(channels[getChannel(msgArr[1])]);
 			else
 				errorHandler("You are not in that channel");
