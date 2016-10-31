@@ -78,7 +78,7 @@
 	var userName;
 
   //current channel
-  var channel="";
+  var channel;
 
 	//store lists retrieved from server
 	var usrList = [];
@@ -86,6 +86,8 @@
 
   //channels currently "joined"
   var channels = [];
+
+	//all channels on server
 	var chanList = [];
 
 	sock.onopen= function()
@@ -171,6 +173,16 @@
 		}
 	}
 
+	function chanInChanList(s)
+	{
+		for (var i in chanList)
+		{
+			if(chanList[i].name == s)
+				return i;
+		}
+		return null;
+	}
+
 
   //sends object to sever
   function send(e)
@@ -190,10 +202,12 @@
 				break;
 			case "CHANLIST":
 				tmp = msg.args;
-				for(var i in tmp)
+				for (c in tmp)
 				{
-					if(!getChannel(msg.args[i]))
-						chanList.push(new channelObj(tmp[i]));
+					if (chanInChanList(tmp[c]) == null)
+					{
+						chanList.push(new channelObj(tmp[c]));
+					}
 				}
 				populateChannelList();
 				break;
@@ -212,7 +226,7 @@
 				var tmp =""+msg.user+" JOINED "+msg.args[0];
 				msg.user = "AceChat";
 				msg.args.push(tmp);
-				getChannel(msg.args[0]).messages.push(tmp);
+				channels[getChannel(msg.args[0])].messages.push(tmp);
 				if(channel == channels[getChannel(msg.args[0])])
 					printChannelMessages(channel);
 				break;
@@ -227,7 +241,6 @@
 			case "ERROR":
 				errorHandler(msg.args[0]);
 				break;
-
 		}
 	};
 
@@ -237,19 +250,19 @@
 	};
 
 	//input: channel name (string)
-	//output: channelObj
+	//output: index of channelObj in channels
 	function getChannel(s)
 	{
-		for(var i in chanList)
+		for(var i in channels)
 		{
-			if(chanList[i].name == s)
+			if(channels[i].name == s)
 				return i;
 		}
 		return null;
 	}
 
 
-  	//accepts a channel and a string containing an error message. 
+  	//accepts a string containing an error message. 
 	//server errors must be wrapped in the onmessage function
 	function errorHandler(e)
 	{
@@ -275,8 +288,8 @@
 										"timestamp" : new Date().getTime()/1000
 									};
 		e.messages.push(welcome);
-
 	}
+
 	function welcomeMsg()
 	{
 		var welcome = {
@@ -287,7 +300,6 @@
 									};
 		return welcome;
 	}
-
 
   //gets user list from server, returns as array of strings
   function requestUsrList()
@@ -339,28 +351,18 @@
 		}
   }
 
-  //leaves the channels specified by an array of channelObjs
+  //leaves the channel specified by a channelObj
   function part(e)
   {
-
-		var arr;
-		for (var c in e)
-		{
-			if(c.name)
-				arr.push(c.name);
-		}
     var msg = {
 								"command" : "PART",
-								"args" : c
+								"args" : [e.name]
 							};
     send(msg);
 
-		for (var i in e)
-		{
-			var tmp = channels.indexOf(e[i]);
-			if(tmp > -1)
-				channels.splice(tmp,1);
-		}
+		var tmp = channels.indexOf(e);
+		if(tmp > -1)
+			channels.splice(tmp,1);
 		populateChannelList();
 		if(channels.length == 0)
 			logout();
@@ -372,6 +374,7 @@
 
   //invite users to channel
   //args in the form [channel name, user0, user1,..,usern]
+	//TODO
   function invite(e)
   {
     var msg = {
@@ -381,14 +384,13 @@
     send(msg);
   }
 
-  //list channels on server
   function requestChanList()
   {
     var msg = {
 								"command" : "CHANLIST",
 								"args" : []
 							};
-    send(msg); //get list from server?
+    send(msg); 
   }
 
   function createCookie(name,value,days) 
@@ -405,7 +407,6 @@
     document.cookie = name+"="+value+expires+"; path=/";
   }
 
-	//I'm so sorry
 	function help()
 	{
 		//join
@@ -447,7 +448,6 @@
 		createCookie("user","",-1);
 		sock.close();
 		window.location="login.html";
-
 	}
 
 	//param: channelObj
@@ -536,23 +536,17 @@ updateTopBar();
 		}
 		
 		//part
-		else if(msgTxt.match(/^\/part\s+[^\s<>][^<>]*/))
+		else if(msgTxt.match(/^\/part\s+[^\s]+/))
 		{
-			msgArr.shift();
-			arr = msgArr.join(" ").match(/[^<>]+/);
-			if(!!~channels.indexOf(arr[0].trim()))
-				part([channels[getChannel(arr[0].trim())]]);
+			if(channels.indexOf(msgArr[1])>-1)
+				part(channels[getChannel(msgArr[1])]);
 			else
 				errorHandler("You are not in that channel");
 		}
-		else if(msgTxt.match(/^\/part\s+[\s<>]*/g)) 
-		{
-			errorHandler("Invalid channel name");
-		}
 		//part with no args should leave the current channel
-		else if(msgTxt === "/part")
+		else if(msgTxt.match(/^\/part\s*/))
 		{
-			part([channel]);
+			part(channel);
 		}
 
     //logout, logoff
