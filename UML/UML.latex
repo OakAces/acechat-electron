@@ -27,11 +27,13 @@
 				\operation{updateTopBar() : void}
 				\operation{populateChannelList() : void}
 				\operation{channelObj() : void}
+				\operation{populateOnlineChannelList() : void}
 				\operation{populateOnlineList() : void}
+				\operation{chanInChanList() : int}
 				\operation{send() : void}
 				\operation{sock.onmessage() : void}
 				\operation{window.onload() : void}
-				\operation{getChannel() : channelObj}
+				\operation{getChannel() : int}
 				\operation{errorHandler() : void}
 				\operation{chanMsg() : void}
 				\operation{welcomeMsg() : string}
