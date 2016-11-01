@@ -603,6 +603,12 @@
 			help();
 		}
 
+		//invalid command
+		else if (msgTxt.match(/^\/.*/))
+		{
+			errorHandler("Invalid command");
+		}
+
     //default, send message to current channel
     else if (msgTxt != "" && msgTxt != null)
 		{
