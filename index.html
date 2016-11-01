@@ -70,11 +70,13 @@
 </html>
   
 <script type="text/javascript">
-	server = getCookie("server");
+	var server = getCookie("server");
 	
-	//var sock = new WebSocket("ws://45.55.80.240");
-	//var sock = new WebSocket("ws://acechat.dyladan.me");
-	//var sock = new WebSocket("ws://localhost:9090");
+	if(server == "")
+	{
+		window.location="login.html";
+	}
+
 	var sock = new WebSocket("ws://"+server);
 
 	var userName;
@@ -94,15 +96,11 @@
 
 	sock.onopen= function()
 	{
-		//must be logged in to access this page
-		if(!document.cookie)
-		{
-			window.location="login.html";
-		}
-
 		//login with server
 		userName = getCookie("user");
-		if(userName.toLowerCase() == "acechat" || userName.match(/[<>]+/) || userName.match(/&gt;/) || userName.match(/&lt;/))
+		//must be logged in to access this page
+		
+		if(userName.toLowerCase() == "acechat"|| !userName.match(/[A-z0-9]+/))
 		{
 			logout();
 		}
@@ -225,6 +223,11 @@
 					{
 						chanList.push(new channelObj(tmp[c]));
 					}
+				}
+				for (c in chanList)
+				{
+					if (tmp.indexOf(chanList[c].name) == -1)
+						chanList.splice(c,1);
 				}
 				populateChannelList();
 				break;
@@ -606,7 +609,7 @@
 		//invalid command
 		else if (msgTxt.match(/^\/.*/))
 		{
-			errorHandler("Invalid command");
+			errorHandler("Invalid Command");
 		}
 
     //default, send message to current channel
