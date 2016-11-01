@@ -67,13 +67,15 @@
     </div>
 
   </body>
-
 </html>
   
 <script type="text/javascript">
+	server = getCookie("server");
 	
 	//var sock = new WebSocket("ws://45.55.80.240");
-	var sock = new WebSocket("ws://localhost:9090");
+	//var sock = new WebSocket("ws://acechat.dyladan.me");
+	//var sock = new WebSocket("ws://localhost:9090");
+	var sock = new WebSocket("ws://"+server);
 
 	var userName;
 
@@ -99,7 +101,7 @@
 		}
 
 		//login with server
-		userName = document.cookie.split('=')[1];
+		userName = getCookie("user");
 		if(userName.toLowerCase() == "acechat" || userName.match(/[<>]+/) || userName.match(/&gt;/) || userName.match(/&lt;/))
 		{
 			logout();
@@ -120,6 +122,21 @@
 		document.getElementById("body").innerHTML="<p style='color:white'>Failed to connect to server</p>";
 	};
 
+	function getCookie(cname) 
+	{
+		var name = cname + "=";
+		var ca = document.cookie.split(';');
+		for(var i = 0; i <ca.length; i++) {
+			var c = ca[i];
+			while (c.charAt(0)==' ') {
+				c = c.substring(1);
+			}
+			if (c.indexOf(name) == 0) {
+				return c.substring(name.length,c.length);
+			}
+		}
+		return "";
+	} 
 
 	//updates top bar and online-channel-list header
 	function updateTopBar()
@@ -356,7 +373,7 @@
 			channel.messages.push(s);
 			chanMsg(channel);
 			updateTopBar();
-			requestChanList();
+			//requestChanList();
 			printChannelMessages(tmp);
 		}
   }
@@ -373,7 +390,7 @@
 		var tmp = channels.indexOf(e);
 		if(tmp > -1)
 			channels.splice(tmp,1);
-		populateChannelList();
+		//populateChannelList();
 		if(channels.length == 0)
 			logout();
 		if(channels.indexOf(channel) == -1)
@@ -501,9 +518,6 @@
     var msgArr = msgTxt.split(" ");
     var msg;
     document.getElementById("chat-prompt").value = "";
-requestUsrList();
-requestChanList();
-updateTopBar();
     
     //if input begins with /msg validUsrName, send private message
     if (msgTxt.match(/^\/msg(\s|$)/) && !!~usrList.indexOf(msgArr[1]))

@@ -14,28 +14,31 @@ body
   right:0;
   width: 30%;
   margin: auto;
-  height: 20%;
+  height: 30%;
 
 }
 
-
-.textarea
+#warning
 {
-  color: white;
-  font-size: 20px;
-  width: 100%; 
-  display: table; 
-  padding: 0 0 0;
 }
 
 .textbox
 {
-  display: table-cell;
   width: auto;
 }
-button
+.textbutton
 {
-  width: 100%;
+  width: 20%;
+	display:inline-block;
+}
+#inputprompt
+{
+}
+#login-prompt
+{
+	width:80%;
+	float:left;
+	display:inline-block;
 }
 input
 {
