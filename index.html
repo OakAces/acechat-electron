@@ -229,10 +229,18 @@
 				populateChannelList();
 				break;
 			case "MSG":
+				var msgTxt = msg.args[1];
+				msgTxt = msgTxt.replace(/</g, "&lt;");
+				msgTxt = msgTxt.replace(/>/g, "&gt;");
+				msg.args[1] = msgTxt;
 				channels[getChannel(msg.args[0])].messages.push(msg);
 				printChannelMessages(channel);
 				break;
 			case "PRIVMSG":
+				var msgTxt = msg.args[1];
+				msgTxt = msgTxt.replace(/</g, "&lt;");
+				msgTxt = msgTxt.replace(/>/g, "&gt;");
+				msg.args[1] = msgTxt;
 				for(var i in channels)
 				{
 					channels[i].messages.push(msg);
@@ -522,8 +530,6 @@
     //if input begins with /msg validUsrName, send private message
     if (msgTxt.match(/^\/msg(\s|$)/) && !!~usrList.indexOf(msgArr[1]))
     {
-			msgTxt = msgTxt.replace(/</g, "&lt;");
-			msgTxt = msgTxt.replace(/>/g, "&gt;");
       msgArr.shift();
 			u = msgArr[0];
       msgArr.shift();
@@ -544,8 +550,6 @@
 		//join
 		else if(msgTxt.match(/^\/join\s+[^\s]+/))
 		{
-			msgTxt = msgTxt.replace(/</g, "&lt;");
-			msgTxt = msgTxt.replace(/>/g, "&gt;");
 			msgArr.shift();
 			arr = msgArr.join(" ").match(/[^<>]+/);
 			joinChannel(arr[0].trim());
@@ -602,8 +606,6 @@
     //default, send message to current channel
     else if (msgTxt != "" && msgTxt != null)
 		{
-			msgTxt = msgTxt.replace(/</g, "&lt;");
-			msgTxt = msgTxt.replace(/>/g, "&gt;");
       msg = {
               "command" : "MSG",
 							"args" : [channel.name, msgTxt]
