@@ -567,10 +567,14 @@
 		}
 		
 		//part
-		else if(msgTxt.match(/^\/part\s+[^\s]+/))
+		else if(msgTxt.match(/^\/part\s+\S+[.]*/))
 		{
-			if(channels[getChannel(msgArr[1])])
-				part(channels[getChannel(msgArr[1])]);
+			msgArr.shift();
+			arr = msgArr.join(" ").trim();
+			if(channels[getChannel(arr)] != null)
+			{
+				part(channels[getChannel(arr)]);
+			}
 			else
 				errorHandler("You are not in that channel");
 		}
@@ -581,7 +585,8 @@
 		}
 
     //logout, logoff
-    //parts all channels, logs out
+    //**parts all channels**, logs out
+		//ideally would part all channels, but it doesn't, and that's okay too.
     else if (msgTxt.match(/^\/logoff(\s|$)/) || msgTxt.match(/^\/logout(\s|$)/))
     {
 			logout();
