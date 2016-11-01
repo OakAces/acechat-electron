@@ -223,20 +223,30 @@
 				printChannelMessages(channel);
 				break;
 			case "JOIN":
+				if(channel == channels[getChannel(msg.args[0])])
+				{
+					chanList = [];
+					for(var k = 1; k < msg.args.length;++k)
+						chanUsrList.push(msg.args[k]);
+					populateOnlineChannelList();
+				}
 				var tmp =""+msg.user+" JOINED "+msg.args[0];
 				msg.user = "AceChat";
 				msg.args.push(tmp);
 				channels[getChannel(msg.args[0])].messages.push(tmp);
-				if(channel == channels[getChannel(msg.args[0])])
-					printChannelMessages(channel);
 				break;
 			case "PART":
+				if(channel == channels[getChannel(msg.args[0])])
+				{
+					chanList = [];
+					for(var k = 1; k < msg.args.length;++k)
+						chanUsrList.push(msg.args[k]);
+					populateOnlineChannelList();
+				}
 				var tmp =""+msg.user+" PARTED "+msg.args[0];
 				msg.user = "AceChat";
 				msg.args.push(tmp);
 				channels[getChannel(msg.args[0])].messages.push(tmp);
-				if(channel == channels[getChannel(msg.args[0])])
-					printChannelMessages(channel);
 				break;
 			case "ERROR":
 				errorHandler(msg.args[0]);
