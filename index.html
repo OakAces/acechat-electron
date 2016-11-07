@@ -448,28 +448,32 @@
 	function help()
 	{
 		//join
-		msgTxt = "/join &lt;channel&gt;................join a channel<br>";
+		msgTxt = "/join &lt;channel&gt;............................join a channel<br>";
 
 		//part
-		msgTxt += "/part [channel]................leave a channel<br>";
+		msgTxt += "/part [channel]............................leave a channel<br>";
 
 		//logoff
-		msgTxt += "/logoff........................part all channels and quit<br>";
+		msgTxt += "/logoff....................................part all channels and quit<br>";
 
 		//logout
-		msgTxt += "/logout........................same as /logoff<br>";
+		msgTxt += "/logout....................................same as /logoff<br>";
 
 		//msg
-		msgTxt += "/msg &lt;UserName&gt; &lt;Message&gt;......private message a user<br>";
+		msgTxt += "/msg &lt;UserName&gt; &lt;Message&gt;..................private message a user<br>";
 
 		//whoami
-		msgTxt += "/whoami........................computer aided introspection<br>";
+		msgTxt += "/whoami....................................computer aided introspection<br>";
 
 		//standard message
-		msgTxt += "&lt;message&gt;......................send message to your current channel<br>";
+		msgTxt += "&lt;message&gt;..................................send message to your current channel<br>";
+
+		//invite
+		msgTxt += "/invite &lt;user0&gt; [user1]...[usern]..........invite users to a channel *experimental*<br>"
 
 		//help
-		msgTxt += "/help..........................show this dialog";
+		msgTxt += "/help......................................show this dialog";
+
 		msg = {
 						"user" : "AceChat",
 						"command" : "SYSTEM",
@@ -531,7 +535,7 @@
     document.getElementById("chat-prompt").value = "";
     
     //if input begins with /msg validUsrName, send private message
-    if (msgTxt.match(/^\/msg(\s|$)/) && !!~usrList.indexOf(msgArr[1]))
+    if (msgTxt.match(/^\/msg(\s)/) && !!~usrList.indexOf(msgArr[1]))
     {
       msgArr.shift();
 			u = msgArr[0];
@@ -604,6 +608,22 @@
 			channel.messages.push(msg);
 			printChannelMessages(channel);
 		}
+
+		//invite with one valid username
+		else if (msgTxt.match(/^\/invite(\s)/))// && !!~chanList.indexOf(chanInChanList(msgArr[1])) && !!~usrList.indexOf(msgArr[2]))
+		{
+			c = [msgArr[1]];
+			u = [msgArr[2]];
+      invite(c.concat(u));
+      console.log(c.concat(u));
+
+		}
+
+
+
+
+
+
 
 		//help
 		else if (msgTxt.match(/^\/help\s*/))
