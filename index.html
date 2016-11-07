@@ -272,6 +272,37 @@
 				msg.args.push(tmp);
 				channels[getChannel(msg.args[0])].messages.push(tmp);
 				break;
+			case "INVITE":
+				var tmp = "";
+				tmp = "User "+msg.user+" has invited you to channel "+msg.args[0]+"."
+				if(channel != channels[getChannel(msg.args[0])])
+				{
+					joinChannel(msg.args[0]);
+					msg = {
+										"user" : "AceChat",
+										"command" : "SYSTEM",
+										"args" : [channel.name, tmp],
+										"timestamp" : new Date().getTime()/1000
+								};
+					channel.messages.push(msg);
+					printChannelMessages(channel);
+				}
+				else
+				{
+					tmp += " But you're already here!";
+
+
+					msg = {
+										"user" : "AceChat",
+										"command" : "SYSTEM",
+										"args" : [channel.name, tmp],
+										"timestamp" : new Date().getTime()/1000
+								};
+
+					channel.messages.push(msg);
+					printChannelMessages(channel);
+				}
+				break;
 			case "ERROR":
 				errorHandler(msg.args[0]);
 				break;
@@ -297,7 +328,7 @@
 
 
   	//accepts a string containing an error message. 
-	//server errors must be wrapped in the onmessage function
+	//server errors must be deconstructed in the onmessage function
 	function errorHandler(e)
 	{
 		msg = {
@@ -464,7 +495,7 @@
 		msgTxt += "&lt;message&gt;..................................send message to your current channel<br>";
 
 		//invite
-		msgTxt += "/invite &lt;user0&gt; [user1]...[usern]..........invite users to the current  channel *experimental*<br>"
+		msgTxt += "/invite &lt;user0&gt; [user1]...[usern]..........invite users to the current channel<br>"
 
 		//help
 		msgTxt += "/help......................................show this dialog";
@@ -597,7 +628,7 @@
 			msg = {
 							"user" : "AceChat",
 							"command" : "SYSTEM",
-							"args" : [channel, userName],
+							"args" : [channel.name, userName],
 							"timestamp" : new Date().getTime()/1000
 						};
 			channel.messages.push(msg);
@@ -643,7 +674,7 @@
 					msg = {
 										"user" : "AceChat",
 										"command" : "SYSTEM",
-										"args" : [channel, msgTxt],
+										"args" : [channel.name, msgTxt],
 										"timestamp" : new Date().getTime()/1000
 								};
 					channel.messages.push(msg);
@@ -664,7 +695,7 @@
 					msg = {
 										"user" : "AceChat",
 										"command" : "SYSTEM",
-										"args" : [channel, msgTxt],
+										"args" : [channel.name, msgTxt],
 										"timestamp" : new Date().getTime()/1000
 								};
 					channel.messages.push(msg);
