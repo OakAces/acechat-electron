@@ -18,7 +18,7 @@
 
       <div class="textarea">
 				<div id="inputprompt"class="textbox">
-          <input type="text" placeholder="Your name here (/[A-z0-9]+/)"id="login-prompt"onkeydown="if(event.keyCode == 13)
+          <input type="text" placeholder="Your name here (/^[A-z0-9]{1,10}$/)"id="login-prompt"onkeydown="if(event.keyCode == 13)
 												      login();" />
         <div class="textbutton">
 					<input type="button" id="loginbutton" Value="Send" onclick="login();"/>

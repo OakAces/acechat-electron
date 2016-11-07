@@ -100,7 +100,7 @@
 		userName = getCookie("user");
 		//must be logged in to access this page
 		
-		if(userName.toLowerCase() == "acechat"|| !userName.match(/[A-z0-9]+/))
+		if(userName.toLowerCase() == "acechat"|| !userName.match(/^[A-z0-9]{1,10}$/))
 		{
 			logout();
 		}
@@ -266,7 +266,7 @@
 			case "PART":
 				if(channel == channels[getChannel(msg.args[0])])
 				{
-					chanList = [];
+					chanUsrList = [];
 					for(var k = 1; k < msg.args.length;++k)
 						chanUsrList.push(msg.args[k]);
 					populateOnlineChannelList();
