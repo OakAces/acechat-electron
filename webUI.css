@@ -40,7 +40,6 @@
   color:white;
 	word-wrap: break-word;
   border: none;
-	width:100%;
 }
 .online-button
 {
@@ -75,9 +74,6 @@
   color:white;
   float:right;
   height: 3%;
-	word-wrap: break-word;
-	overflow-x:hidden;
-	overflow-y:auto;
 }
 code
 {
@@ -123,9 +119,6 @@ code
 {
 	background:#333333;
 	overflow-x:hidden;
-	overflow-y:auto;
-	word-wrap: break-word;
-	height:4%;
 }
 .body
 {
