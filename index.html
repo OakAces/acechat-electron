@@ -9,7 +9,7 @@
   <head>
 
     <link rel="stylesheet" type="text/css" href="webUI.css">
-		<title>AceChat</title>
+		<title id="title">AceChat</title>
 
   </head>
 
@@ -67,6 +67,7 @@
   
 <script type="text/javascript">
 	var server = getCookie("server");
+	var focus = true;
 	
 	if(server == "")
 	{
@@ -314,6 +315,18 @@
 		document.getElementById('chat-prompt').focus();
 	};
 
+	window.onfocus = function ()
+	{
+		focus = true;
+		document.getElementById('title').innerHTML="AceChat";
+	}
+
+	window.onblur = function ()
+	{
+		focus = false;
+
+	}
+
 	//input: channel name (string)
 	//output: index of channelObj in channels
 	function getChannel(s)
@@ -550,6 +563,11 @@
 				}
 			}
 			document.getElementById("chat-log-wrapper").scrollTop=document.getElementById("chat-log-wrapper").scrollHeight;
+		}
+
+		if(!focus)
+		{
+			document.getElementById('title').innerHTML="AceChat!";
 		}
 	}
 
