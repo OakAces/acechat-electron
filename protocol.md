@@ -18,7 +18,7 @@ User input in the form
 ```
 is encoded as
 ```
-\protocol000<message\000
+\protocol000<message>\000
 ```
 and is displayed in the channel in the form
 ```
