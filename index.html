@@ -652,6 +652,15 @@
 							"args" : [u,msgTxt]
 						};
       send(msg);
+
+			msg = {
+							"user" : "[PRV] -> "+u,
+							"command" : "MSG",
+							"args" : [channel.name, msgTxt],
+							"timestamp" : new Date().getTime()/1000
+						};
+			channel.messages.push(msg);
+			printChannelMessages(channel);
     }
 
 		//if input begins with /msg invalidUsrName, throw error
@@ -661,19 +670,15 @@
     }
 
 		//join
-		else if(msgTxt.match(/^\/join\s+[A-z0-9]{1-10}$/))
+		else if(msgTxt.match(/^\/join\s+[A-z0-9]{1,10}$/))
 		{
 			msgArr.shift();
 			arr = msgArr.join(" ").match(/[^<>]+/);
 			joinChannel(arr[0].trim());
 		}
-		else if(msgTxt.match(/^\/join\s+[\s<>]*/g)) 
+		else if(msgTxt.match(/^\/join\s+/)) 
 		{
 			errorHandler("Invalid channel name");
-		}
-		else if(msgTxt === "/join")
-		{
-			errorHandler("Must enter a channel name");
 		}
 		
 		//part
