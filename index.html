@@ -784,7 +784,7 @@
 		}
 		
 		//invalid command
-		else if (msgTxt.match(/^\/.*/))
+		else if (msgTxt.match(/^\/.*/) || msgTxt.match(/^\\.*/))
 		{
 			errorHandler("Invalid Command");
 		}
