@@ -16,7 +16,7 @@ User input in the form
 ```
 /me <message>
 ```
-becomes
+is encoded as
 ```
 \protocol000<message\000
 ```
