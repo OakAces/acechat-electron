@@ -145,7 +145,14 @@
 		document.getElementById("channel-list").innerHTML="";
 		for(var i=0;i<chanList.length;++i)
 		{
-			var btn = '<button class="channel-button" onclick="joinChannel(\''+chanList[i].name+'\');"><code>'+chanList[i].name+'</code></button>';
+			if(chanList[i].name == channel.name)
+			{
+				var btn = '<button class="channel-button"id="active-channel" onclick="joinChannel(\''+chanList[i].name+'\');"><code>'+chanList[i].name+'</code></button>';
+			}
+			else
+			{
+				var btn = '<button class="channel-button" onclick="joinChannel(\''+chanList[i].name+'\');"><code>'+chanList[i].name+'</code></button>';
+			}
 			document.getElementById("channel-list").innerHTML+=btn+"<br>";
 		}
 	}
@@ -159,7 +166,7 @@
 		this.messages = [];
 	}
 
-	function populateOnlineChannelList() //notimplemented serverside yet
+	function populateOnlineChannelList() 
 	{
 		document.getElementById("online-channel-list").innerHTML="";
 		for(var i=0;i<chanUsrList.length;++i)
@@ -167,7 +174,7 @@
 			var arg = "'/msg ";
 			arg += chanUsrList[i];
 			arg+=" '";
-			var btn = '<button class="online-button" onclick="getElementById(\'chat-prompt\').value='+arg+'"><code>'+chanUsrList[i]+'</code></button>';
+			var btn = '<button class="online-button" onclick="getElementById(\'chat-prompt\').value='+arg+'; document.getElementById(\'chat-prompt\').focus();"><code>'+chanUsrList[i]+'</code></button>';
 			document.getElementById("online-channel-list").innerHTML+=btn+"<br>";
 		}
 	}
@@ -180,7 +187,7 @@
 			var arg = "'/msg ";
 			arg += usrList[i];
 			arg+=" '";
-			var btn = '<button class="online-button" onclick="getElementById(\'chat-prompt\').value='+arg+'"><code>'+usrList[i]+'</code></button>';
+			var btn = '<button class="online-button" onclick="getElementById(\'chat-prompt\').value='+arg+'; document.getElementById(\'chat-prompt\').focus();"><code>'+chanUsrList[i]+'</code></button>';
 			document.getElementById("online-list").innerHTML+=btn+"<br>";
 		}
 	}
@@ -407,6 +414,7 @@
 		{
 			channel = tmp;
 			updateTopBar();
+			populateChannelList();
 			channel.messages.push(s);
 			printChannelMessages(channel);
 		}
@@ -424,7 +432,7 @@
 			channel.messages.push(s);
 			chanMsg(channel);
 			updateTopBar();
-			//requestChanList();
+			populateChannelList();
 			printChannelMessages(tmp);
 		}
   }

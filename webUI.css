@@ -41,6 +41,10 @@
 	word-wrap: break-word;
   border: none;
 }
+#active-channel
+{
+	color:red;
+}
 .online-button
 {
   background : none;
