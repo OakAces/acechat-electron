@@ -607,7 +607,7 @@
     }
 
 		//join
-		else if(msgTxt.match(/^\/join\s+[^\s]+/))
+		else if(msgTxt.match(/^\/join\s+[A-z0-9]{1-10}$/))
 		{
 			msgArr.shift();
 			arr = msgArr.join(" ").match(/[^<>]+/);
