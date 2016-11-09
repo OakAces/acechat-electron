@@ -25,4 +25,14 @@ and is displayed in the channel in the form
 *<user> <message>*
 ```
 
-
+###/party
+User input in the form
+```
+/party <message>
+```
+is encoded as 
+```
+\protocol001<message>\001
+```
+Text displayed in the channel is displayed in the form of a party. That is, each
+letter is a random color.
