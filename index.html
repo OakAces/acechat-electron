@@ -504,8 +504,10 @@
 
 	function help()
 	{
+		msgTxt =  "Channels are created by joining them and are deleted when they are empty.<br>"; 
+
 		//join
-		msgTxt = "/join &lt;channel&gt;............................join a channel<br>";
+		msgTxt += "/join &lt;channel&gt;............................join a channel<br>";
 
 		//part
 		msgTxt += "/part [channel]............................leave a channel<br>";
@@ -527,6 +529,9 @@
 
 		//standard message
 		msgTxt += "&lt;message&gt;..................................send message to your current channel<br>";
+
+		//me
+		msgTxt += "/me &lt;message&gt;...........................perform an action<br>";
 
 		//help
 		msgTxt += "/help......................................show this dialog";
