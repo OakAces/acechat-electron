@@ -245,10 +245,31 @@
 				{
 					if(msgTxt.substring(9,12) == "000" & msgTxt.slice(-4) == "\\000")
 					{
+						//me
 						msg.args[1] = msgTxt.slice(12,-4);
 						msg.command = "ME";
 						msg.args[1] = "*"+msg.user+" "+msg.args[1]+"*";
 					}
+					else if(msgTxt.substring(9,12) == "001" & msgTxt.slice(-4) == "\\001")
+					{
+						//PARTY!
+						msg.args[1] = msgTxt.slice(12,-4);
+						var tmp = msg.args[1];
+						var otherTmp="";
+
+						for(var q in tmp)
+						{
+							otherTmp+= '<div style="display:inline;color:'+randColor()+'">'+tmp[q]+'</div>';
+						}
+						msg.args[1] = otherTmp;
+					}
+
+					else
+					{
+						//catch invalid protocol messages
+						errorHandler("Error -- Invalid Protocol Message");
+					}
+
 				}
 				channels[getChannel(msg.args[0])].messages.push(msg);
 				printChannelMessages(channel);
@@ -342,6 +363,16 @@
 	{
 		focus = false;
 
+	}
+	function randColor() 
+	{
+    var hex= '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++ ) 
+		{
+        color += hex[Math.floor(Math.random() * 16)];
+    }
+    return color;
 	}
 
 	//input: channel name (string)
@@ -504,7 +535,7 @@
 
 	function help()
 	{
-		msgTxt =  "Channels are created by joining them and are deleted when they are empty.<br>"; 
+		msgTxt =  "Channels are created by joining them and are deleted when they are empty.<br><br>"; 
 
 		//join
 		msgTxt += "/join &lt;channel&gt;............................join a channel<br>";
@@ -531,7 +562,10 @@
 		msgTxt += "&lt;message&gt;..................................send message to your current channel<br>";
 
 		//me
-		msgTxt += "/me &lt;message&gt;...........................perform an action<br>";
+		msgTxt += "/me &lt;message&gt;..............................perform an action<br>";
+
+		//party
+		msgTxt += "/party &lt;message&gt;...........................throw a party<br>";
 
 		//help
 		msgTxt += "/help......................................show this dialog";
@@ -655,7 +689,7 @@
 				errorHandler("You are not in that channel");
 		}
 		//part with no args should leave the current channel
-		else if(msgTxt.match(/^\/part\s*/))
+		else if(msgTxt.match(/^\/part\s*$/))
 		{
 			part(channel);
 		}
@@ -776,6 +810,19 @@
 			msgArr.shift();
 			msgTxt = msgArr.join(" ");
 			msgTxt = "\\protocol000"+msgTxt+"\\000";
+      msg = {
+              "command" : "MSG",
+							"args" : [channel.name, msgTxt]
+						};
+      send(msg);
+		}
+
+		//party!
+		else if (msgTxt.match(/^\/party\s+\S+/))
+		{
+			msgArr.shift();
+			msgTxt = msgArr.join(" ");
+			msgTxt = "\\protocol001"+msgTxt+"\\001";
       msg = {
               "command" : "MSG",
 							"args" : [channel.name, msgTxt]
