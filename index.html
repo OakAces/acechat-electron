@@ -240,6 +240,16 @@
 				msgTxt = msgTxt.replace(/</g, "&lt;");
 				msgTxt = msgTxt.replace(/>/g, "&gt;");
 				msg.args[1] = msgTxt;
+				//client protocol messages
+				if(msgTxt.substring(0,9) == "\\protocol")
+				{
+					if(msgTxt.substring(9,12) == "000" & msgTxt.slice(-4) == "\\000")
+					{
+						msg.args[1] = msgTxt.slice(12,-4);
+						msg.command = "ME";
+						msg.args[1] = "*"+msg.user+" "+msg.args[1]+"*";
+					}
+				}
 				channels[getChannel(msg.args[0])].messages.push(msg);
 				printChannelMessages(channel);
 				break;
@@ -562,6 +572,11 @@
 						msgHeader += "[SYS]";
 					msgHeader += e.messages[i].user+" > ";
 					msgText += e.messages[i].args[1];
+
+					if(e.messages[i].command=="ME")
+					{
+						msgHeader='';
+					}
 					msgHeader = "<div class=\"msgHeader\"><code>"+msgHeader+"</code></div>";
 					msgText = "<div class=\"msgText\"><code>"+msgText+"</code></div>";
 
@@ -750,6 +765,19 @@
 			help();
 		}
 
+		//me
+		else if (msgTxt.match(/^\/me\s+\S+/))
+		{
+			msgArr.shift();
+			msgTxt = msgArr.join(" ");
+			msgTxt = "\\protocol000"+msgTxt+"\\000";
+      msg = {
+              "command" : "MSG",
+							"args" : [channel.name, msgTxt]
+						};
+      send(msg);
+		}
+		
 		//invalid command
 		else if (msgTxt.match(/^\/.*/))
 		{
