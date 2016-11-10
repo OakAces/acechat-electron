@@ -131,6 +131,12 @@ code
   overflow: hidden;
   background: black;
 	font-size:14px;
+	font-family:monospace;
+}
+
+a
+{
+	color:blue;
 }
 
 .chat-prompt
