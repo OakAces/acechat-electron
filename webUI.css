@@ -17,6 +17,7 @@
 .spacer
 {
 	display:table-cell;
+	width:.5em;
 }
 .msgRow
 {
@@ -24,7 +25,7 @@
 }
 .msgText
 {
-	width: 70%;
+	width: auto;
 	display:table-cell;
 	vertical-align:top;
 }
@@ -32,7 +33,8 @@
 {
 	display:table-cell;
 	vertical-align:top;
-	width: 30%;
+	text-align:right;
+	width: 20em;
 }
 .channel-button
 {
@@ -128,6 +130,7 @@ code
 {
   overflow: hidden;
   background: black;
+	font-size:14px;
 }
 
 .chat-prompt

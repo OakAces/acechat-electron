@@ -619,9 +619,10 @@
 						msgHeader='';
 					}
 					msgHeader = "<div class=\"msgHeader\"><code>"+msgHeader+"</code></div>";
+					var sp    = "<div class=\"spacer\"></div>";
 					msgText = "<div class=\"msgText\"><code>"+msgText+"</code></div>";
 
-					document.getElementById("chat-log").innerHTML+="<div class=\"msgRow\">"+msgHeader + msgText+ "</div>";
+					document.getElementById("chat-log").innerHTML+="<div class=\"msgRow\">"+msgHeader +sp+ msgText+ "</div>";
 					document.getElementById("chat-log").innerHTML+="<div class=\"msgRow\"><div class=\"spacer\"><br></div><div class=\"spacer\"><br></div></div>";
 
 				}
