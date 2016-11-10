@@ -295,8 +295,9 @@
 				}
 				var tmp =""+msg.user+" JOINED "+msg.args[0];
 				msg.user = "AceChat";
-				msg.args.push(tmp);
-				channels[getChannel(msg.args[0])].messages.push(tmp);
+				msg.args[1]=tmp;
+				channels[getChannel(msg.args[0])].messages.push(msg);
+				printChannelMessages(channels[getChannel(msg.args[0])]);
 				break;
 			case "PART":
 				if(channel == channels[getChannel(msg.args[0])])
@@ -308,8 +309,9 @@
 				}
 				var tmp =""+msg.user+" PARTED "+msg.args[0];
 				msg.user = "AceChat";
-				msg.args.push(tmp);
-				channels[getChannel(msg.args[0])].messages.push(tmp);
+				msg.args[1]=tmp;
+				channels[getChannel(msg.args[0])].messages.push(msg);
+				printChannelMessages(channels[getChannel(msg.args[0])]);
 				break;
 			case "INVITE":
 				var tmp = "";
