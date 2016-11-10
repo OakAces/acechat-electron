@@ -298,7 +298,8 @@
 				msg.command="SYSTEM";
 				msg.args[1]=tmp;
 				channels[getChannel(msg.args[0])].messages.push(msg);
-				printChannelMessages(channels[getChannel(msg.args[0])]);
+				if(channel == channels[getChannel(msg.args[0])])
+					printChannelMessages(channels[getChannel(msg.args[0])]);
 				break;
 			case "PART":
 				if(channel == channels[getChannel(msg.args[0])])
@@ -313,7 +314,8 @@
 				msg.command="SYSTEM";
 				msg.args[1]=tmp;
 				channels[getChannel(msg.args[0])].messages.push(msg);
-				printChannelMessages(channels[getChannel(msg.args[0])]);
+				if(channel == channels[getChannel(msg.args[0])])
+					printChannelMessages(channels[getChannel(msg.args[0])]);
 				break;
 			case "INVITE":
 				var tmp = "";
@@ -647,9 +649,14 @@
     var msgArr = msgTxt.split(" ");
     var msg;
     document.getElementById("chat-prompt").value = "";
-    
+
+    //msg
+		if (msgTxt.match(/^\/msg\s*$/) || msgTxt.match(/^\/msg\s+\S+\s*$/)) 
+		{
+			errorHandler("/msg must accept at least two arguments");
+		}
     //if input begins with /msg validUsrName, send private message
-    if (msgTxt.match(/^\/msg(\s)+/) && !!~usrList.indexOf(msgArr[1]))
+		else if (msgTxt.match(/^\/msg(\s)+/) && !!~usrList.indexOf(msgArr[1]))
     {
       msgArr.shift();
 			u = msgArr[0];
