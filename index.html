@@ -295,6 +295,7 @@
 				}
 				var tmp =""+msg.user+" JOINED "+msg.args[0];
 				msg.user = "AceChat";
+				msg.command="SYSTEM";
 				msg.args[1]=tmp;
 				channels[getChannel(msg.args[0])].messages.push(msg);
 				printChannelMessages(channels[getChannel(msg.args[0])]);
@@ -309,6 +310,7 @@
 				}
 				var tmp =""+msg.user+" PARTED "+msg.args[0];
 				msg.user = "AceChat";
+				msg.command="SYSTEM";
 				msg.args[1]=tmp;
 				channels[getChannel(msg.args[0])].messages.push(msg);
 				printChannelMessages(channels[getChannel(msg.args[0])]);
@@ -537,10 +539,13 @@
 
 	function help()
 	{
-		msgTxt =  "Channels are created by joining them and are deleted when they are empty.<br><br>"; 
+		msgTxt =  "Channels are created by joining them and are deleted when they are empty.<br>"; 
+		msgTxt += "Channel names may not contain spaces and cannot be longer than 10 characters.<br>";
+		msgTxt += "Mandatory arguments to commands are denoted by angle brackets &lt;&gt;<br>";
+		msgTxt += "Optional arguments to commands are dentoted by square brackets []<br><br>";
 
 		//join
-		msgTxt += "/join &lt;channel&gt;............................join a channel<br>";
+		msgTxt += "/join &lt;channel&gt;............................join a channe.<br>";
 
 		//part
 		msgTxt += "/part [channel]............................leave a channel<br>";
@@ -678,6 +683,10 @@
 			msgArr.shift();
 			arr = msgArr.join(" ").match(/[^<>]+/);
 			joinChannel(arr[0].trim());
+		}
+		else if(msgTxt.match(/^\/join\s*$/)) 
+		{
+			errorHandler("/join must accept at least one argument");
 		}
 		else if(msgTxt.match(/^\/join\s+/)) 
 		{
@@ -824,6 +833,10 @@
 						};
       send(msg);
 		}
+		else if (msgTxt.match(/^\/me\s*$/))
+		{
+			errorHandler("/me must accept at least one argument");
+		}
 
 		//party!
 		else if (msgTxt.match(/^\/party\s+\S+/))
@@ -836,6 +849,10 @@
 							"args" : [channel.name, msgTxt]
 						};
       send(msg);
+		}
+		else if (msgTxt.match(/^\/party\s*$/))
+		{
+			errorHandler("You need more arguments to party!");
 		}
 		
 		//invalid command
