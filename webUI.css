@@ -53,7 +53,6 @@
   color:white;
   border: none;
 	word-wrap: break-word;
-	width:100%;
 }
 .left-column
 {
@@ -61,14 +60,16 @@
   color: white;
   width:14.5%;
   text-align: center;
+	display:flex;
+	flex-flow:column;
   float:left;
   height: 100%;
 }
 #channel-list
 {
   background-color:#404040;
-  width:94%;
-  height:88%;
+  width:auto;
+	flex: 1 1 auto;
   overflow:auto;
 	overflow-x:hidden;
   padding:5px; 
@@ -81,10 +82,7 @@
   float:right;
   height: 3%;
 }
-code
-{
-	/*font-size: x-large;*/
-}
+
 .logout-button
 {
   background-color:red;
@@ -109,7 +107,7 @@ code
 #online-list
 {
   background-color:#404040;
-  width:94%;
+  width:auto;
   height:50%;
   overflow:auto;
   padding:5px; 
@@ -117,14 +115,18 @@ code
 #online-channel-list
 {
 	background-color:#404040;
-	width:94%;
-	height:41%;
+	width:auto;
+	height:35.5%;
 	overflow:auto;
 }
 #online-channel-header
 {
 	background:#333333;
 	overflow-x:hidden;
+}
+h3
+{
+	height:auto;
 }
 .body
 {
@@ -149,11 +151,6 @@ a
   width: 100%;
 }
 
-* 
-{ 
-  box-sizing: border-box; 
-}
-      
 .textarea
 {
   color: white;
