@@ -8,7 +8,7 @@ Web client for the AceChat chat server
 ![](https://raw.githubusercontent.com/OakAces/acechat-WebClient/master/images/screenshot13.png)
 *Uses `window.alert()`, style varies based on your browser. My browser's theme happens to be a close match to AceChat's.*
 
-![](https://raw.githubusercontent.com/OakAces/acechat-WebClient/master/images/screenshot12.png)
+![](https://raw.githubusercontent.com/OakAces/acechat-WebClient/master/images/screenshot14.png)
 *Screenshot of web UI*
 
 #User Commands
