@@ -50,7 +50,7 @@
       </div>
 
       <div class="textarea">
-	%gt;&nbsp;
+	&gt;&nbsp;
 	<div class="textbox">
 	  <input type="text"autocomplete="off" placeholder="Say Something!"id="chat-prompt"onkeydown="if(event.keyCode == 13)
 											parseInput();"/>
@@ -149,11 +149,12 @@
 		{
 			if(chanList[i].name == channel.name)
 			{
-				var btn = '<button class="channel-button"id="active-channel" onclick="joinChannel(\''+chanList[i].name+'\');"><code>'+chanList[i].name+'</code></button>';
+				var btn = '<button class="channel-button"id="active-channel" onclick="joinChannel(\''+chanList[i].name+'\');document.getElementById(\'chat-prompt\').focus();"><code>'+chanList[i].name+'</code></button>';
+			
 			}
 			else
 			{
-				var btn = '<button class="channel-button" onclick="joinChannel(\''+chanList[i].name+'\');"><code>'+chanList[i].name+'</code></button>';
+				var btn = '<button class="channel-button" onclick="joinChannel(\''+chanList[i].name+'\');document.getElementById(\'chat-prompt\').focus();"><code>'+chanList[i].name+'</code></button>';
 			}
 			document.getElementById("channel-list").innerHTML+=btn+"<br>";
 		}
