@@ -37,6 +37,7 @@ a
 {
   width: 20%;
 	display:inline-block;
+	border:0px;
 }
 #inputprompt
 {
@@ -50,4 +51,5 @@ a
 input
 {
   width: 100%;
+	border:0px;
 }
