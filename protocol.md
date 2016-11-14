@@ -1,13 +1,18 @@
-#Client Protocol
+#Client-to-Client Protocol
 
-The client protocol is a secondary and independent protocol from the main server
-protocol. The client protocol is used to communicate special commands that 
-don't need interference from the server between clients. Encoded messages take 
-the form:
+The client-to-client protocol is a secondary and independent protocol from the
+main server protocol. The client-to-client protocol is used to communicate
+special commands that don't need interference from the server between clients.
+
+Different implementations of the AceChat chat client may choose to implement
+this protocol differently, but the input and output should be the same to allow 
+for maximum cross-compatibility.
+
+Encoded messages take the form:
 ```
 \protocolxxx<message>\xxx
 ```
-where `xxx` is the protocol number.
+where `xxx` is the three digit hexadecimal protocol number.
 
 ##Currently Supported Encodings
 
@@ -36,3 +41,10 @@ is encoded as
 ```
 and is displayed in the channel in the form of a party. That is, 
 each letter is a random color.
+
+##Unencoded Messages
+
+Unencoded messages are displayed as expected. The protocol only applies to
+messages that are wrapped in a protocol layer. Messages wrapped in an invalid or 
+unsupported protocol layer may either be discarded or displayed with the 
+protocol wrapper at the client's discretion.
