@@ -22,5 +22,7 @@ Command|Explanation
 /msg \<usrName\> \<message\>|Send a Private Message
 /whoami|Who are you?
 /invite \<user0\> [user1]...[usern]|Invite user(s) to the current channel
+\<message\>|Send a message
+/me \<message\>|Perform an action
 /party \<message\>|Throw a party 
 /help|Ask for help

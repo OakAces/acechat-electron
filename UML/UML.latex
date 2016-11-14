@@ -16,6 +16,8 @@
       \end{class}
 
       \begin{class}{index.html}{8,0}
+				\attribute{server : string}
+				\attribute{focus: boolean}
 				\attribute{sock : WebSocket}
 				\attribute{userName : string}
 				\attribute{channel : channelObj}
@@ -24,6 +26,7 @@
 				\attribute{chanList: channelObj[]}
 				\operation{sock.onopen() : void}
 				\operation{sock.onclose() : void}
+				\operation{getCoolie() : string}
 				\operation{updateTopBar() : void}
 				\operation{populateChannelList() : void}
 				\operation{channelObj() : void}
@@ -33,6 +36,9 @@
 				\operation{send() : void}
 				\operation{sock.onmessage() : void}
 				\operation{window.onload() : void}
+				\operation{window.onfocus() : void}
+				\operation{window.onblur() : void}
+				\operation{randColor() : string}
 				\operation{getChannel() : int}
 				\operation{errorHandler() : void}
 				\operation{chanMsg() : void}
@@ -48,8 +54,6 @@
 				\operation{printChannelMessages() : void}
 				\operation{parseInput() : void}
 
-
-				
       \end{class}
 
   \end{tikzpicture}
