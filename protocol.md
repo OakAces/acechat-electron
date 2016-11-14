@@ -46,5 +46,5 @@ each letter is a random color.
 
 Unencoded messages are displayed as expected. The protocol only applies to
 messages that are wrapped in a protocol layer. Messages wrapped in an invalid or 
-unsupported protocol layer may either be discarded or displayed with the 
-protocol wrapper at the client's discretion.
+unsupported protocol layer should either be throw an error or be displayed with
+the protocol wrapper at the client's discretion.

@@ -10,3 +10,17 @@ Web client for the AceChat chat server
 
 ![](https://raw.githubusercontent.com/OakAces/acechat-WebClient/master/images/screenshot12.png)
 *Screenshot of web UI*
+
+#User Commands
+
+Command|Explanation
+---|---
+/join \<channel\>|Join a channel
+/part [channel]|Part a channel
+/logoff|Part all channels and quit
+/logout|See /logoff
+/msg \<usrName\> \<message\>|Send a Private Message
+/whoami|Who are you?
+/invite \<user0\> [user1]...[usern]|Invite user(s) to the current channel
+/party \<message\>|Throw a party 
+/help|Ask for help
