@@ -258,8 +258,8 @@
 						//PARTY!
 						msg.args[1] = msgTxt.slice(12,-4);
 						var tmp = msg.args[1];
-						tmp = tmp.replace(/&lt;/,"<");
-						tmp = tmp.replace(/&gt;/,">");
+						tmp = tmp.replace(/&lt;/g,"<");
+						tmp = tmp.replace(/&gt;/g,">");
 						var otherTmp="";
 
 						for(var q in tmp)
